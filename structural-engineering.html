@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structural Engineering Basics - CiviLearn</title>
+    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .course-header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('Image/structural (1).jpeg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .course-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .course-code {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .course-duration {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .course-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .course-description {
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .lessons-container {
+            margin-top: 40px;
+        }
+        
+        .lesson-card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lesson-card.locked {
+            opacity: 0.7;
+        }
+        
+        .lesson-card.locked::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        
+        .lesson-card.locked::after {
+            content: '\f023';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            color: #333;
+            z-index: 2;
+        }
+        
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .lesson-title {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .lesson-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .lesson-status.completed {
+            color: #4CAF50;
+        }
+        
+        .lesson-status.pending {
+            color: #FFC107;
+        }
+        
+        .lesson-status.locked {
+            color: #9E9E9E;
+        }
+        
+        .lesson-description {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .lesson-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .btn-start {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .btn-start:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-start:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .quiz-badge {
+            background-color: #FF9800;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        
+        .progress-container {
+            margin-top: 40px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-title {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .progress-percentage {
+            font-weight: 600;
+            color: #4CAF50;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .back-to-courses {
+            display: inline-block;
+            margin-top: 20px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-to-courses:hover {
+            text-decoration: underline;
+        }
+        
+        .content-with-image {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .content-with-image .text-content {
+            flex: 1;
+        }
+        
+        .content-with-image .image-container {
+            flex: 1;
+            max-width: 50%;
+        }
+        
+        .content-image {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 8px;
+        }
+        
+        .image-caption {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .concept-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .concept-icon {
+            font-size: 1.8rem;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .concept-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .concept-item p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        
+        .career-paths {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .career-path {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .career-icon {
+            font-size: 1.8rem;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .career-path h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .career-path p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        
+        .lesson-modal-popup {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-complete {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            font-weight: 500 !important;
+            padding: 8px 20px !important;
+            border-radius: 4px !important;
+        }
+        
+        .btn-close {
+            background-color: #f8f9fa !important;
+            color: #333 !important;
+            font-weight: 500 !important;
+            padding: 8px 20px !important;
+            border-radius: 4px !important;
+            border: 1px solid #ddd !important;
+        }
+        
+        @media (max-width: 768px) {
+            .content-with-image {
+                flex-direction: column;
+            }
+            
+            .content-with-image .image-container {
+                max-width: 100%;
+                order: -1;
+            }
+            
+            .concept-grid, .career-paths {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .concept-grid, .career-paths {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>CiviLearn</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#courses">Courses</a>
+            <a href="index.html#ebooks">Resources</a>
+            <a href="index.html#forum">Forum</a>
+            <a href="index.html#study-space">Study Space</a>
+        </div>
+        <div class="auth-buttons">
+            <a href="login.html" class="login-btn">Login</a>
+            <a href="signup.html" class="signup-btn">Sign Up</a>
+        </div>
+        <div class="profile-section" style="display: none;">
+            <div class="profile-dropdown">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <span class="user-fullname"></span>
+                </div>
+                <div class="dropdown-content">
+                    <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="#" class="dropdown-item logout-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <div class="course-header">
+        <h1>Structural Engineering Basics</h1>
+        <div class="course-info">
+            <div class="course-code">Course Code: SE101</div>
+            <div class="course-duration">Duration: 8 weeks</div>
+        </div>
+    </div>
+
+    <!-- Course Content -->
+    <div class="course-content">
+        <div class="course-description">
+            <h2>About This Course</h2>
+            <p>This course provides a comprehensive introduction to structural engineering principles. You'll learn about the fundamental concepts of structural analysis, design methodologies, and the behavior of different structural elements under various loading conditions.</p>
+            <p>By the end of this course, you'll be able to analyze simple structures, understand the principles of structural design, and apply basic engineering concepts to solve structural problems.</p>
+        </div>
+
+        <!-- Progress Tracking -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <div class="progress-title">Course Progress</div>
+                <div class="progress-percentage">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Lessons -->
+        <div class="lessons-container">
+            <h2>Course Lessons</h2>
+            
+            <!-- Lesson 1 -->
+            <div class="lesson-card" data-lesson-id="1">
+                <div class="lesson-header">
+                    <div class="lesson-title">Lesson 1: Introduction to Structural Engineering</div>
+                    <div class="lesson-status pending">
+                        <i class="fas fa-clock"></i> Pending
+                    </div>
+                </div>
+                <div class="lesson-description">
+                    <p>An overview of structural engineering, its history, and its importance in civil engineering. Learn about the basic principles and concepts that form the foundation of structural analysis and design.</p>
+                </div>
+                <div class="lesson-actions">
+                    <button class="btn-start" data-lesson-id="1">Start Lesson</button>
+                </div>
+            </div>
+            
+            <!-- Lesson 2 -->
+            <div class="lesson-card" data-lesson-id="2">
+                <div class="lesson-header">
+                    <div class="lesson-title">Lesson 2: Forces and Equilibrium</div>
+                    <div class="lesson-status pending">
+                        <i class="fas fa-clock"></i> Pending
+                    </div>
+                </div>
+                <div class="lesson-description">
+                    <p>Understanding the fundamental concepts of forces, moments, and equilibrium. Learn how to analyze and calculate forces acting on structures and how to determine if a structure is in equilibrium.</p>
+                </div>
+                <div class="lesson-actions">
+                    <button class="btn-start" data-lesson-id="2" disabled>Start Lesson</button>
+                </div>
+            </div>
+            
+            <!-- Quiz 1 -->
+            <div class="lesson-card quiz-card" data-lesson-id="quiz1">
+                <div class="lesson-header">
+                    <div class="lesson-title">Quiz 1: Forces and Equilibrium <span class="quiz-badge">Quiz</span></div>
+                    <div class="lesson-status pending">
+                        <i class="fas fa-clock"></i> Pending
+                    </div>
+                </div>
+                <div class="lesson-description">
+                    <p>Test your understanding of forces, moments, and equilibrium concepts covered in Lessons 1 and 2.</p>
+                </div>
+                <div class="lesson-actions">
+                    <button class="btn-start" data-lesson-id="quiz1" disabled>Start Quiz</button>
+                </div>
+            </div>
+            
+            <!-- Lesson 3 -->
+            <div class="lesson-card locked" data-lesson-id="3">
+                <div class="lesson-header">
+                    <div class="lesson-title">Lesson 3: Structural Analysis Methods</div>
+                    <div class="lesson-status locked">
+                        <i class="fas fa-lock"></i> Locked
+                    </div>
+                </div>
+                <div class="lesson-description">
+                    <p>Explore different methods used in structural analysis, including the method of joints, method of sections, and virtual work method. Learn how to apply these methods to analyze trusses and beams.</p>
+                </div>
+                <div class="lesson-actions">
+                    <button class="btn-start" data-lesson-id="3" disabled>Start Lesson</button>
+                </div>
+            </div>
+            
+            <!-- Lesson 4 -->
+            <div class="lesson-card locked" data-lesson-id="4">
+                <div class="lesson-header">
+                    <div class="lesson-title">Lesson 4: Beam Analysis</div>
+                    <div class="lesson-status locked">
+                        <i class="fas fa-lock"></i> Locked
+                    </div>
+                </div>
+                <div class="lesson-description">
+                    <p>Learn about different types of beams, their behavior under various loading conditions, and how to analyze them. Understand concepts like shear force, bending moment, and deflection.</p>
+                </div>
+                <div class="lesson-actions">
+                    <button class="btn-start" data-lesson-id="4" disabled>Start Lesson</button>
+                </div>
+            </div>
+            
+            <!-- Quiz 2 -->
+            <div class="lesson-card quiz-card locked" data-lesson-id="quiz2">
+                <div class="lesson-header">
+                    <div class="lesson-title">Quiz 2: Structural Analysis and Beams <span class="quiz-badge">Quiz</span></div>
+                    <div class="lesson-status locked">
+                        <i class="fas fa-lock"></i> Locked
+                    </div>
+                </div>
+                <div class="lesson-description">
+                    <p>Test your understanding of structural analysis methods and beam analysis covered in Lessons 3 and 4.</p>
+                </div>
+                <div class="lesson-actions">
+                    <button class="btn-start" data-lesson-id="quiz2" disabled>Start Quiz</button>
+                </div>
+            </div>
+            
+            <!-- Additional lessons would be added here -->
+        </div>
+        
+        <a href="index.html#courses" class="back-to-courses">
+            <i class="fas fa-arrow-left"></i> Back to Courses
+        </a>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication state
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+            const sessionExpiration = localStorage.getItem('sessionExpiration');
+            
+            if (isLoggedIn) {
+                // Check if session has expired
+                if (sessionExpiration && new Date(sessionExpiration) < new Date()) {
+                    // Session expired, clear storage
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // User is signed in
+                document.querySelector('.auth-buttons').style.display = 'none';
+                document.querySelector('.profile-section').style.display = 'flex';
+                
+                // Get user data from localStorage or sessionStorage
+                const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+                const userFullName = localStorage.getItem('userFullName') || sessionStorage.getItem('userFullName');
+                
+                // Update profile info
+                document.querySelector('.user-fullname').textContent = userFullName || 'User';
+                
+                // Update profile icon if available
+                const storageKey = `userProfileImage_${userEmail}`;
+                const userProfileImage = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey);
+                
+                if (userProfileImage) {
+                    updateProfileIcon(userProfileImage);
+                }
+                
+                // Setup logout button
+                setupLogoutButton();
+                
+                // Load course progress
+                loadCourseProgress();
+            } else {
+                // User is signed out, redirect to login
+                Swal.fire({
+                    title: 'Authentication Required',
+                    text: 'Please log in to access this course.',
+                    icon: 'info',
+                    confirmButtonText: 'Login Now'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'login.html';
+                    } else {
+                        window.location.href = 'index.html#courses';
+                    }
+                });
+            }
+            
+            // Setup lesson buttons
+            setupLessonButtons();
+        });
+        
+        // Update profile icon with custom image
+        function updateProfileIcon(imageUrl) {
+            const profileIcon = document.querySelector('.profile-icon');
+            
+            // Clear existing content
+            profileIcon.innerHTML = '';
+            
+            // Create and append image element
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = 'Profile Image';
+            
+            // Add specific styling for the profile icon image
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '50%';
+            
+            // Handle image load error
+            img.onerror = function() {
+                // If image fails to load, revert to default icon
+                profileIcon.innerHTML = '<i class="fas fa-user-circle"></i>';
+            };
+            
+            profileIcon.appendChild(img);
+        }
+        
+        // Setup logout button
+        function setupLogoutButton() {
+            const logoutBtn = document.querySelector('.logout-btn');
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Show confirmation dialog
+                Swal.fire({
+                    title: 'Sign Out',
+                    text: 'Are you sure you want to sign out?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, sign out',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Clear session storage
+                        sessionStorage.clear();
+                        
+                        // Clear localStorage if not using remember me
+                        if (localStorage.getItem('rememberMe') !== 'true') {
+                            localStorage.clear();
+                        } else {
+                            // Keep only remember me related data
+                            const rememberMe = localStorage.getItem('rememberMe');
+                            const isLoggedIn = localStorage.getItem('isLoggedIn');
+                            const userEmail = localStorage.getItem('userEmail');
+                            const userFullName = localStorage.getItem('userFullName');
+                            const sessionExpiration = localStorage.getItem('sessionExpiration');
+                            
+                            localStorage.clear();
+                            
+                            localStorage.setItem('rememberMe', rememberMe);
+                            localStorage.setItem('isLoggedIn', isLoggedIn);
+                            localStorage.setItem('userEmail', userEmail);
+                            localStorage.setItem('userFullName', userFullName);
+                            localStorage.setItem('sessionExpiration', sessionExpiration);
+                        }
+                        
+                        // Show success notification
+                        showNotification('Signed out successfully!', 'success');
+                        
+                        // Redirect to login page
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    }
+                });
+            });
+        }
+        
+        // Load course progress from localStorage
+        function loadCourseProgress() {
+            const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+            const courseProgressKey = `courseProgress_SE101_${userEmail}`;
+            const courseProgress = JSON.parse(localStorage.getItem(courseProgressKey) || '{"completedLessons": [], "quizScores": {}}');
+            
+            // Update progress bar
+            const totalLessons = 6; // Total number of lessons and quizzes
+            const completedLessons = courseProgress.completedLessons.length;
+            const progressPercentage = Math.round((completedLessons / totalLessons) * 100);
+            
+            document.querySelector('.progress-percentage').textContent = `${progressPercentage}%`;
+            document.querySelector('.progress-fill').style.width = `${progressPercentage}%`;
+            
+            // Define lesson prerequisites
+            const prerequisites = {
+                '1': [], // Lesson 1 has no prerequisites
+                '2': ['1'], // Lesson 2 requires Lesson 1
+                'quiz1': ['1', '2'], // Quiz 1 requires Lessons 1 and 2
+                '3': ['quiz1'], // Lesson 3 requires Quiz 1
+                '4': ['3'], // Lesson 4 requires Lesson 3
+                'quiz2': ['3', '4'] // Quiz 2 requires Lessons 3 and 4
+            };
+            
+            // Update lesson statuses based on completion and prerequisites
+            Object.keys(prerequisites).forEach(lessonId => {
+                const lessonCard = document.querySelector(`.lesson-card[data-lesson-id="${lessonId}"]`);
+                const startButton = lessonCard.querySelector('.btn-start');
+                const statusElement = lessonCard.querySelector('.lesson-status');
+                
+                // Check if all prerequisites are completed
+                const allPrerequisitesCompleted = prerequisites[lessonId].every(prereq => 
+                    courseProgress.completedLessons.includes(prereq)
+                );
+                
+                if (courseProgress.completedLessons.includes(lessonId)) {
+                    // Lesson already completed
+                    lessonCard.classList.remove('locked');
+                    statusElement.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                    statusElement.classList.remove('pending', 'locked');
+                    statusElement.classList.add('completed');
+                    startButton.disabled = false;
+                } else if (allPrerequisitesCompleted) {
+                    // All prerequisites completed, lesson is available
+                    lessonCard.classList.remove('locked');
+                    statusElement.innerHTML = '<i class="fas fa-clock"></i> Pending';
+                    statusElement.classList.remove('locked');
+                    statusElement.classList.add('pending');
+                    startButton.disabled = false;
+                } else {
+                    // Prerequisites not met, lesson is locked
+                    lessonCard.classList.add('locked');
+                    statusElement.innerHTML = '<i class="fas fa-lock"></i> Locked';
+                    statusElement.classList.remove('pending', 'completed');
+                    statusElement.classList.add('locked');
+                    startButton.disabled = true;
+                }
+            });
+        }
+        
+        // Setup lesson buttons
+        function setupLessonButtons() {
+            const lessonButtons = document.querySelectorAll('.btn-start');
+            
+            lessonButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lessonId = this.getAttribute('data-lesson-id');
+                    
+                    if (lessonId.startsWith('quiz')) {
+                        // Handle quiz
+                        startQuiz(lessonId);
+                    } else {
+                        // Handle lesson
+                        startLesson(lessonId);
+                    }
+                });
+            });
+        }
+        
+        // Start a lesson
+        function startLesson(lessonId) {
+            // Get lesson content based on lesson ID
+            const lessonContent = getLessonContent(lessonId);
+            
+            // Create a modal with the lesson content
+            Swal.fire({
+                title: `<div class="modal-title">Lesson ${lessonId}: ${lessonContent.title}</div>`,
+                html: `
+                    <div class="lesson-modal-content">
+                        <div class="audio-controls">
+                            <button id="audioToggle" class="audio-btn">
+                                <i class="fas fa-volume-up"></i> Listen to Lesson
+                            </button>
+                            <div class="audio-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <div class="time-display">0:00 / 0:00</div>
+                            </div>
+                        </div>
+                        <div class="lesson-content-scroll">
+                            ${lessonContent.content}
+                        </div>
+                    </div>
+                `,
+                width: '80%',
+                showCloseButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Mark as Complete',
+                showCancelButton: true,
+                cancelButtonText: 'Close',
+                customClass: {
+                    container: 'lesson-modal-container',
+                    popup: 'lesson-modal-popup',
+                    content: 'lesson-modal-content',
+                    confirmButton: 'btn-complete',
+                    cancelButton: 'btn-close'
+                },
+                didOpen: () => {
+                    // Add custom styles to the modal
+                    const modalContent = document.querySelector('.lesson-content-scroll');
+                    if (modalContent) {
+                        modalContent.style.maxHeight = '60vh';
+                        modalContent.style.overflowY = 'auto';
+                        modalContent.style.padding = '0 20px';
+                    }
+                    
+                    // Add formal styling for lesson content
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .modal-title {
+                            font-size: 1.5rem;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 15px;
+                            padding-bottom: 10px;
+                            border-bottom: 1px solid #eee;
+                            text-align: center;
+                        }
+                        
+                        .audio-controls {
+                            margin-bottom: 20px;
+                            padding: 10px;
+                            background-color: #f8f9fa;
+                            border-radius: 8px;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                        }
+                        
+                        .audio-btn {
+                            background-color: #4CAF50;
+                            color: white;
+                            border: none;
+                            padding: 10px 15px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-weight: 500;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                            transition: background-color 0.2s;
+                        }
+                        
+                        .audio-btn:hover {
+                            background-color: #45a049;
+                        }
+                        
+                        .audio-btn.playing {
+                            background-color: #f44336;
+                        }
+                        
+                        .audio-progress {
+                            width: 100%;
+                        }
+                        
+                        .audio-progress .progress-bar {
+                            height: 6px;
+                            background-color: #e0e0e0;
+                            border-radius: 3px;
+                            overflow: hidden;
+                            margin-bottom: 5px;
+                        }
+                        
+                        .audio-progress .progress-fill {
+                            height: 100%;
+                            background-color: #4CAF50;
+                            width: 0%;
+                            transition: width 0.1s linear;
+                        }
+                        
+                        .time-display {
+                            font-size: 0.8rem;
+                            color: #666;
+                            text-align: right;
+                        }
+                        
+                        .lesson-content-scroll {
+                            text-align: left;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 0 20px;
+                        }
+                        
+                        .lesson-content-scroll h3 {
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            color: #2c3e50;
+                            margin-top: 25px;
+                            margin-bottom: 15px;
+                            padding-bottom: 5px;
+                            border-bottom: 1px solid #eee;
+                            text-align: left;
+                        }
+                        
+                        .lesson-content-scroll p {
+                            font-size: 1rem;
+                            line-height: 1.6;
+                            color: #444;
+                            margin-bottom: 15px;
+                            text-align: left;
+                        }
+                        
+                        .lesson-content-scroll ul, .lesson-content-scroll ol {
+                            margin-left: 20px;
+                            margin-bottom: 15px;
+                            text-align: left;
+                        }
+                        
+                        .lesson-content-scroll li {
+                            font-size: 1rem;
+                            line-height: 1.6;
+                            color: #444;
+                            margin-bottom: 8px;
+                            text-align: left;
+                        }
+                        
+                        .lesson-content-scroll strong {
+                            font-weight: 600;
+                            color: #2c3e50;
+                        }
+                        
+                        /* New styles for content with images */
+                        .content-with-image {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: flex-start;
+                            margin-bottom: 20px;
+                            gap: 20px;
+                        }
+                        
+                        .content-with-image .text-content {
+                            flex: 1;
+                        }
+                        
+                        .content-with-image .image-container {
+                            flex: 1;
+                            max-width: 50%;
+                        }
+                        
+                        .content-image {
+                            width: 100%;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                            margin-bottom: 8px;
+                        }
+                        
+                        .image-caption {
+                            font-size: 0.85rem;
+                            color: #666;
+                            text-align: center;
+                            font-style: italic;
+                        }
+                        
+                        /* Concept grid styles */
+                        .concept-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                            gap: 15px;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .concept-item {
+                            background-color: #f8f9fa;
+                            border-radius: 8px;
+                            padding: 15px;
+                            text-align: center;
+                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                        }
+                        
+                        .concept-icon {
+                            font-size: 1.8rem;
+                            color: #4CAF50;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .concept-item h4 {
+                            font-size: 1.1rem;
+                            margin-bottom: 8px;
+                            color: #2c3e50;
+                        }
+                        
+                        .concept-item p {
+                            font-size: 0.9rem;
+                            margin-bottom: 0;
+                        }
+                        
+                        /* Career paths styles */
+                        .career-paths {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                            gap: 15px;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .career-path {
+                            background-color: #f8f9fa;
+                            border-radius: 8px;
+                            padding: 15px;
+                            text-align: center;
+                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                        }
+                        
+                        .career-icon {
+                            font-size: 1.8rem;
+                            color: #4CAF50;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .career-path h4 {
+                            font-size: 1.1rem;
+                            margin-bottom: 8px;
+                            color: #2c3e50;
+                        }
+                        
+                        .career-path p {
+                            font-size: 0.9rem;
+                            margin-bottom: 0;
+                        }
+                        
+                        .lesson-modal-popup {
+                            border-radius: 8px;
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                        }
+                        
+                        .btn-complete {
+                            background-color: #4CAF50 !important;
+                            color: white !important;
+                            font-weight: 500 !important;
+                            padding: 8px 20px !important;
+                            border-radius: 4px !important;
+                        }
+                        
+                        .btn-close {
+                            background-color: #f8f9fa !important;
+                            color: #333 !important;
+                            font-weight: 500 !important;
+                            padding: 8px 20px !important;
+                            border-radius: 4px !important;
+                            border: 1px solid #ddd !important;
+                        }
+                        
+                        /* Responsive adjustments */
+                        @media (max-width: 768px) {
+                            .content-with-image {
+                                flex-direction: column;
+                            }
+                            
+                            .content-with-image .image-container {
+                                max-width: 100%;
+                                order: -1;
+                            }
+                            
+                            .concept-grid, .career-paths {
+                                grid-template-columns: 1fr 1fr;
+                            }
+                        }
+                        
+                        @media (max-width: 480px) {
+                            .concept-grid, .career-paths {
+                                grid-template-columns: 1fr;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    // Setup audio functionality
+                    setupAudioReader(lessonContent.content);
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Mark lesson as complete
+                    completeLesson(lessonId);
+                }
+            });
+        }
+        
+        // Get lesson content based on lesson ID
+        function getLessonContent(lessonId) {
+            const lessonContents = {
+                '1': {
+                    title: 'Introduction to Structural Engineering',
+                    content: `
+                        <h3>What is Structural Engineering?</h3>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <p>Structural engineering is a branch of civil engineering that deals with the design, analysis, and construction of structures that support or resist loads. Structural engineers ensure that buildings, bridges, and other infrastructure are safe, stable, and able to withstand various forces throughout their lifecycle.</p>
+                            </div>
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Structural Engineering Concept" class="content-image">
+                                <div class="image-caption">Modern structural engineering combines aesthetics with functionality</div>
+                            </div>
+                        </div>
+                        
+                        <h3>History of Structural Engineering</h3>
+                        <p>The practice of structural engineering dates back to ancient times. Early civilizations built impressive structures using basic principles of structural engineering, often through trial and error. The Egyptian pyramids, Roman aqueducts, and Greek temples are all examples of early structural engineering achievements.</p>
+                        
+                        <div class="content-with-image">
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1548013146-72479768bada?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Ancient Engineering" class="content-image">
+                                <div class="image-caption">Ancient Roman aqueducts demonstrate early structural engineering principles</div>
+                            </div>
+                            <div class="text-content">
+                                <p>Modern structural engineering began to take shape during the Industrial Revolution, with the development of new materials like steel and reinforced concrete. The field has continued to evolve with advances in materials science, computer-aided design, and structural analysis methods.</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Key Concepts in Structural Engineering</h3>
+                        <div class="concept-grid">
+                            <div class="concept-item">
+                                <div class="concept-icon"><i class="fas fa-weight-hanging"></i></div>
+                                <h4>Loads</h4>
+                                <p>Forces that act on structures, including dead loads (permanent), live loads (temporary), and environmental loads (wind, snow, seismic).</p>
+                            </div>
+                            <div class="concept-item">
+                                <div class="concept-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                                <h4>Stress</h4>
+                                <p>Internal resistance of a material to deformation, measured as force per unit area.</p>
+                            </div>
+                            <div class="concept-item">
+                                <div class="concept-icon"><i class="fas fa-arrows-alt-v"></i></div>
+                                <h4>Strain</h4>
+                                <p>The deformation of a material in response to stress.</p>
+                            </div>
+                            <div class="concept-item">
+                                <div class="concept-icon"><i class="fas fa-undo"></i></div>
+                                <h4>Elasticity</h4>
+                                <p>The ability of a material to return to its original shape after deformation.</p>
+                            </div>
+                            <div class="concept-item">
+                                <div class="concept-icon"><i class="fas fa-fist-raised"></i></div>
+                                <h4>Strength</h4>
+                                <p>The ability of a material to withstand applied forces without failure.</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Example: Bridge Design</h3>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <p>When designing a bridge, structural engineers must consider:</p>
+                                <ul>
+                                    <li>The weight of the bridge itself (dead load)</li>
+                                    <li>The weight of vehicles and pedestrians (live load)</li>
+                                    <li>Wind forces that could push the bridge sideways</li>
+                                    <li>Temperature changes that cause expansion and contraction</li>
+                                    <li>Seismic forces in earthquake-prone areas</li>
+                                </ul>
+                                <p>For a simple beam bridge spanning 100 meters, engineers would calculate the maximum bending moment and shear forces to determine the required strength of the bridge deck and supports. They would also analyze how the bridge would deflect under load to ensure it remains stable and functional.</p>
+                            </div>
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1545630478-cf62cdd247f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Bridge Design" class="content-image">
+                                <div class="image-caption">Modern bridge design incorporates multiple structural engineering principles</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Career Paths in Structural Engineering</h3>
+                        <div class="career-paths">
+                            <div class="career-path">
+                                <div class="career-icon"><i class="fas fa-building"></i></div>
+                                <h4>Consulting Firms</h4>
+                                <p>Design structures for clients</p>
+                            </div>
+                            <div class="career-path">
+                                <div class="career-icon"><i class="fas fa-hard-hat"></i></div>
+                                <h4>Construction Companies</h4>
+                                <p>Build structures</p>
+                            </div>
+                            <div class="career-path">
+                                <div class="career-icon"><i class="fas fa-landmark"></i></div>
+                                <h4>Government Agencies</h4>
+                                <p>Regulate building codes</p>
+                            </div>
+                            <div class="career-path">
+                                <div class="career-icon"><i class="fas fa-flask"></i></div>
+                                <h4>Research Institutions</h4>
+                                <p>Develop new materials and methods</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Conclusion</h3>
+                        <p>Structural engineering is a fundamental discipline that shapes the built environment. By understanding the principles of structural engineering, you can appreciate how buildings and infrastructure are designed to be safe, efficient, and aesthetically pleasing.</p>
+                    `
+                },
+                '2': {
+                    title: 'Forces and Equilibrium',
+                    content: `
+                        <h3>Understanding Forces</h3>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <p>A force is a push or pull that can cause an object to accelerate, decelerate, or change direction. In structural engineering, forces are fundamental to understanding how structures behave under various conditions.</p>
+                            </div>
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Forces in Engineering" class="content-image">
+                                <div class="image-caption">Forces acting on structures determine their stability and behavior</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Types of Forces</h3>
+                        <div class="force-types">
+                            <div class="force-type">
+                                <div class="force-icon"><i class="fas fa-arrow-down"></i></div>
+                                <h4>Gravitational Force</h4>
+                                <p>The force of attraction between objects with mass. On Earth, this is commonly referred to as weight.</p>
+                            </div>
+                            <div class="force-type">
+                                <div class="force-icon"><i class="fas fa-arrow-up"></i></div>
+                                <h4>Normal Force</h4>
+                                <p>The force exerted by a surface to support the weight of an object resting on it.</p>
+                            </div>
+                            <div class="force-type">
+                                <div class="force-icon"><i class="fas fa-arrows-alt-h"></i></div>
+                                <h4>Frictional Force</h4>
+                                <p>The force that opposes the relative motion of objects in contact.</p>
+                            </div>
+                            <div class="force-type">
+                                <div class="force-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+                                <h4>Tensile Force</h4>
+                                <p>A force that stretches or pulls apart a material.</p>
+                            </div>
+                            <div class="force-type">
+                                <div class="force-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                                <h4>Compressive Force</h4>
+                                <p>A force that squeezes or compresses a material.</p>
+                            </div>
+                            <div class="force-type">
+                                <div class="force-icon"><i class="fas fa-cut"></i></div>
+                                <h4>Shear Force</h4>
+                                <p>A force that causes parts of a material to slide past each other.</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Force Representation</h3>
+                        <div class="content-with-image">
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Force Vectors" class="content-image">
+                                <div class="image-caption">Forces are represented as vectors with magnitude and direction</div>
+                            </div>
+                            <div class="text-content">
+                                <p>Forces are vector quantities, meaning they have both magnitude and direction. They can be represented graphically using arrows, where:</p>
+                                <ul>
+                                    <li>The length of the arrow represents the magnitude of the force</li>
+                                    <li>The direction of the arrow represents the direction of the force</li>
+                                    <li>The point of application is where the force acts on an object</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <h3>Example: Force on a Beam</h3>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <p>Consider a simply supported beam with a point load at its center:</p>
+                                <ul>
+                                    <li>The weight of the load creates a downward force</li>
+                                    <li>The supports at each end create upward reaction forces</li>
+                                    <li>For the beam to be in equilibrium, the sum of all vertical forces must be zero</li>
+                                    <li>The reaction forces at each support would each be half the weight of the load</li>
+                                </ul>
+                            </div>
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Beam Forces" class="content-image">
+                                <div class="image-caption">Forces on a simply supported beam with a point load</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Equilibrium</h3>
+                        <div class="info-box">
+                            <div class="info-icon"><i class="fas fa-balance-scale"></i></div>
+                            <div class="info-content">
+                                <h4>What is Equilibrium?</h4>
+                                <p>Equilibrium is a state in which all forces acting on an object are balanced, resulting in no net force and no acceleration. For a structure to be stable, it must be in equilibrium.</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Conditions for Equilibrium</h3>
+                        <div class="equilibrium-conditions">
+                            <div class="condition">
+                                <div class="condition-icon"><i class="fas fa-arrows-alt-v"></i></div>
+                                <h4>Translational Equilibrium</h4>
+                                <p>The sum of all forces in any direction must be zero.</p>
+                            </div>
+                            <div class="condition">
+                                <div class="condition-icon"><i class="fas fa-sync-alt"></i></div>
+                                <h4>Rotational Equilibrium</h4>
+                                <p>The sum of all moments (rotational forces) about any point must be zero.</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Example: Cantilever Beam</h3>
+                        <div class="content-with-image">
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Cantilever Beam" class="content-image">
+                                <div class="image-caption">Forces and moments in a cantilever beam</div>
+                            </div>
+                            <div class="text-content">
+                                <p>A cantilever beam is fixed at one end and free at the other. When a load is applied to the free end:</p>
+                                <ul>
+                                    <li>The fixed end must provide a reaction force equal and opposite to the load</li>
+                                    <li>The fixed end must also provide a reaction moment to prevent rotation</li>
+                                    <li>The reaction moment is equal to the load multiplied by the distance from the fixed end</li>
+                                </ul>
+                                <p>For a 200-pound person standing at the end of a 10-foot diving board, the reaction force at the support would be 200 pounds upward, and the reaction moment would be 2000 foot-pounds counterclockwise.</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Free Body Diagrams</h3>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <p>Free body diagrams are essential tools in structural analysis. They show all forces acting on an object, including:</p>
+                                <ul>
+                                    <li>Applied forces</li>
+                                    <li>Reaction forces</li>
+                                    <li>Self-weight</li>
+                                </ul>
+                                <p>By drawing a free body diagram, engineers can visualize and analyze the forces acting on a structure and determine if it is in equilibrium.</p>
+                            </div>
+                            <div class="image-container">
+                                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Free Body Diagram" class="content-image">
+                                <div class="image-caption">Free body diagram showing forces on a structural element</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Conclusion</h3>
+                        <p>Understanding forces and equilibrium is fundamental to structural engineering. By analyzing the forces acting on a structure and ensuring it is in equilibrium, engineers can design safe and stable structures that can withstand various loading conditions.</p>
+                    `
+                },
+                '3': {
+                    title: 'Structural Analysis Methods',
+                    content: `
+                        <h3>Introduction to Structural Analysis</h3>
+                        <p>Structural analysis is the process of determining the effects of loads on physical structures and their components. It involves calculating the internal forces, stresses, and deformations in structural elements to ensure they can safely support the applied loads.</p>
+                        
+                        <h3>Key Structural Analysis Methods</h3>
+                        <ul>
+                            <li><strong>Method of Joints:</strong> Used to analyze trusses by examining the equilibrium of forces at each joint.</li>
+                            <li><strong>Method of Sections:</strong> Used to analyze trusses by cutting through members and examining the equilibrium of the resulting free body.</li>
+                            <li><strong>Virtual Work Method:</strong> Used to determine displacements and rotations in structures.</li>
+                            <li><strong>Stiffness Method:</strong> A matrix method for analyzing complex structures.</li>
+                            <li><strong>Finite Element Analysis (FEA):</strong> A numerical method for solving complex structural problems.</li>
+                        </ul>
+                        
+                        <h3>Method of Joints</h3>
+                        <p>The method of joints is a technique for analyzing trusses by examining the equilibrium of forces at each joint. The steps include:</p>
+                        <ol>
+                            <li>Draw a free body diagram of the entire truss</li>
+                            <li>Determine the support reactions</li>
+                            <li>Select a joint with no more than two unknown forces</li>
+                            <li>Draw a free body diagram of the joint</li>
+                            <li>Apply the equations of equilibrium to solve for the unknown forces</li>
+                            <li>Repeat for each joint until all member forces are determined</li>
+                        </ol>
+                        
+                        <h3>Example: Simple Truss Analysis</h3>
+                        <p>Consider a simple triangular truss supporting a 1000kg load at its apex:</p>
+                        <ul>
+                            <li>The two bottom members would be in compression, pushing against each other</li>
+                            <li>The top member would be in tension, being pulled apart</li>
+                            <li>The magnitude of the forces would depend on the geometry of the truss</li>
+                            <li>For a 45-degree angle, each bottom member would carry approximately 707kg of force</li>
+                        </ul>
+                        
+                        <h3>Method of Sections</h3>
+                        <p>The method of sections is useful when you need to find the force in a specific member of a truss without analyzing the entire structure. The steps include:</p>
+                        <ol>
+                            <li>Draw a free body diagram of the entire truss</li>
+                            <li>Determine the support reactions</li>
+                            <li>Cut through the truss, separating it into two parts</li>
+                            <li>Draw a free body diagram of one of the parts</li>
+                            <li>Apply the equations of equilibrium to solve for the unknown forces</li>
+                        </ol>
+                        
+                        <h3>Virtual Work Method</h3>
+                        <p>The virtual work method is based on the principle of conservation of energy. It involves:</p>
+                        <ol>
+                            <li>Applying a virtual (imaginary) force or moment to the structure</li>
+                            <li>Calculating the virtual work done by the real forces</li>
+                            <li>Calculating the virtual work done by the virtual force</li>
+                            <li>Setting the two equal and solving for the desired displacement or rotation</li>
+                        </ol>
+                        
+                        <h3>Stiffness Method</h3>
+                        <p>The stiffness method is a matrix method for analyzing complex structures. It involves:</p>
+                        <ol>
+                            <li>Dividing the structure into elements</li>
+                            <li>Developing stiffness matrices for each element</li>
+                            <li>Assembling the global stiffness matrix</li>
+                            <li>Applying boundary conditions</li>
+                            <li>Solving the resulting system of equations</li>
+                        </ol>
+                        
+                        <h3>Finite Element Analysis</h3>
+                        <p>Finite Element Analysis (FEA) is a numerical method for solving complex structural problems. It involves:</p>
+                        <ol>
+                            <li>Dividing the structure into small elements</li>
+                            <li>Defining the behavior of each element</li>
+                            <li>Assembling the elements into a global system</li>
+                            <li>Applying loads and boundary conditions</li>
+                            <li>Solving the resulting system of equations</li>
+                        </ol>
+                        <p>FEA is widely used in modern structural engineering for analyzing complex structures that cannot be easily solved using traditional methods.</p>
+                        
+                        <h3>Conclusion</h3>
+                        <p>Structural analysis methods are essential tools for engineers to ensure that structures are safe and efficient. By understanding and applying these methods, engineers can design structures that can withstand various loading conditions and meet the needs of their clients.</p>
+                    `
+                },
+                '4': {
+                    title: 'Beam Analysis',
+                    content: `
+                        <h3>Introduction to Beams</h3>
+                        <p>Beams are structural elements that primarily resist loads applied perpendicular to their longitudinal axis. They are one of the most common structural elements in buildings, bridges, and other structures.</p>
+                        
+                        <h3>Types of Beams</h3>
+                        <ul>
+                            <li><strong>Simply Supported Beam:</strong> Supported at both ends, with one end pinned and the other on a roller.</li>
+                            <li><strong>Cantilever Beam:</strong> Fixed at one end and free at the other.</li>
+                            <li><strong>Fixed Beam:</strong> Fixed at both ends.</li>
+                            <li><strong>Continuous Beam:</strong> Supported at more than two points.</li>
+                            <li><strong>Overhanging Beam:</strong> Extends beyond its supports.</li>
+                        </ul>
+                        
+                        <h3>Beam Loading Conditions</h3>
+                        <ul>
+                            <li><strong>Point Load:</strong> A concentrated force applied at a specific point.</li>
+                            <li><strong>Uniformly Distributed Load (UDL):</strong> A load distributed evenly over the length of the beam.</li>
+                            <li><strong>Varying Distributed Load:</strong> A load that varies in intensity along the length of the beam.</li>
+                            <li><strong>Couple:</strong> Two equal and opposite forces applied at different points, creating a moment.</li>
+                        </ul>
+                        
+                        <h3>Beam Analysis Concepts</h3>
+                        <ul>
+                            <li><strong>Shear Force:</strong> The internal force that tends to cause sliding of one part of the beam relative to another.</li>
+                            <li><strong>Bending Moment:</strong> The internal moment that tends to cause rotation of one part of the beam relative to another.</li>
+                            <li><strong>Deflection:</strong> The displacement of a point on the beam from its original position.</li>
+                            <li><strong>Slope:</strong> The angle of rotation of the beam at a point.</li>
+                        </ul>
+                        
+                        <h3>Example: Simply Supported Beam with UDL</h3>
+                        <p>For a simply supported beam with a uniformly distributed load of 5kN/m over a span of 6m:</p>
+                        <ul>
+                            <li>The total load would be 30kN (5kN/m × 6m)</li>
+                            <li>The reaction at each support would be 15kN (30kN ÷ 2)</li>
+                            <li>The maximum bending moment would occur at the midspan and would be 45kN·m (5kN/m × 6m² ÷ 8)</li>
+                            <li>The maximum deflection would also occur at the midspan</li>
+                        </ul>
+                        
+                        <h3>Shear Force and Bending Moment Diagrams</h3>
+                        <p>Shear force and bending moment diagrams are graphical representations of the internal forces and moments in a beam. They are essential tools for beam analysis and design.</p>
+                        
+                        <h3>Relationship Between Load, Shear, and Moment</h3>
+                        <p>There is a mathematical relationship between the load, shear force, and bending moment:</p>
+                        <ul>
+                            <li>The slope of the shear force diagram is equal to the negative of the distributed load.</li>
+                            <li>The slope of the bending moment diagram is equal to the shear force.</li>
+                            <li>The area under the shear force diagram between two points is equal to the change in bending moment between those points.</li>
+                        </ul>
+                        
+                        <h3>Beam Deflection</h3>
+                        <p>Beam deflection is the displacement of a point on the beam from its original position. It is an important consideration in beam design, as excessive deflection can affect the functionality and aesthetics of a structure.</p>
+                        
+                        <h3>Methods for Calculating Deflection</h3>
+                        <ul>
+                            <li><strong>Double Integration Method:</strong> Integrates the differential equation of the elastic curve twice.</li>
+                            <li><strong>Moment-Area Method:</strong> Uses the area under the bending moment diagram to calculate deflection.</li>
+                            <li><strong>Conjugate Beam Method:</strong> Uses an imaginary beam to calculate deflection.</li>
+                            <li><strong>Virtual Work Method:</strong> Uses the principle of virtual work to calculate deflection.</li>
+                        </ul>
+                        
+                        <h3>Example: Floor Joist Design</h3>
+                        <p>When designing a floor joist for a building, engineers must consider:</p>
+                        <ul>
+                            <li>The weight of the floor itself (dead load)</li>
+                            <li>The weight of furniture, people, and other items (live load)</li>
+                            <li>The span of the joist</li>
+                            <li>The material properties of the joist</li>
+                            <li>The maximum allowable deflection (often limited to span/360 for residential floors)</li>
+                        </ul>
+                        <p>For a 16-foot span with a total load of 50 pounds per square foot, a 2×10 Douglas fir joist spaced 16 inches apart would have a maximum deflection of approximately 0.5 inches, which is within the acceptable range.</p>
+                        
+                        <h3>Conclusion</h3>
+                        <p>Beam analysis is a fundamental aspect of structural engineering. By understanding the behavior of beams under various loading conditions, engineers can design safe and efficient structures that meet the needs of their clients.</p>
+                    `
+                }
+            };
+            
+            return lessonContents[lessonId] || {
+                title: 'Lesson Content',
+                content: '<p>Content for this lesson is not available.</p>'
+            };
+        }
+        
+        // Start a quiz
+        function startQuiz(lessonId) {
+            // Get quiz content based on lesson ID
+            const quizContent = getQuizContent(lessonId);
+            
+            // Create a modal with the quiz content
+            Swal.fire({
+                title: `<div class="modal-title">Quiz ${lessonId}: ${quizContent.title}</div>`,
+                html: `
+                    <div class="quiz-modal-content">
+                        <div class="audio-controls">
+                            <button id="audioToggle" class="audio-btn">
+                                <i class="fas fa-volume-up"></i> Listen to Quiz
+                            </button>
+                            <div class="audio-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <div class="time-display">0:00 / 0:00</div>
+                            </div>
+                        </div>
+                        <div class="quiz-content-scroll">
+                            <div class="quiz-instructions">
+                                <i class="fas fa-info-circle"></i> ${quizContent.instructions}
+                            </div>
+                            <div class="quiz-questions">
+                                ${quizContent.questions.map((question, index) => `
+                                    <div class="quiz-question" data-question-id="${index}">
+                                        <p class="question-text"><strong>Question ${index + 1}:</strong> ${question.text}</p>
+                                        <div class="question-options">
+                                            ${question.options.map((option, optionIndex) => `
+                                                <div class="option">
+                                                    <input type="radio" id="q${index}_o${optionIndex}" name="q${index}" value="${optionIndex}">
+                                                    <label for="q${index}_o${optionIndex}">${option}</label>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `,
+                width: '80%',
+                showCloseButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Submit Quiz',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    container: 'quiz-modal-container',
+                    popup: 'quiz-modal-popup',
+                    content: 'quiz-modal-content',
+                    confirmButton: 'btn-submit',
+                    cancelButton: 'btn-close'
+                },
+                didOpen: () => {
+                    // Add custom styles to the modal
+                    const modalContent = document.querySelector('.quiz-content-scroll');
+                    if (modalContent) {
+                        modalContent.style.maxHeight = '60vh';
+                        modalContent.style.overflowY = 'auto';
+                        modalContent.style.padding = '0 20px';
+                    }
+                    
+                    // Add formal styling for quiz elements
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .modal-title {
+                            font-size: 1.5rem;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 15px;
+                            padding-bottom: 10px;
+                            border-bottom: 1px solid #eee;
+                            text-align: center;
+                        }
+                        
+                        .audio-controls {
+                            margin-bottom: 20px;
+                            padding: 10px;
+                            background-color: #f8f9fa;
+                            border-radius: 8px;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                        }
+                        
+                        .audio-btn {
+                            background-color: #4CAF50;
+                            color: white;
+                            border: none;
+                            padding: 10px 15px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-weight: 500;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                            transition: background-color 0.2s;
+                        }
+                        
+                        .audio-btn:hover {
+                            background-color: #45a049;
+                        }
+                        
+                        .audio-btn.playing {
+                            background-color: #f44336;
+                        }
+                        
+                        .audio-progress {
+                            width: 100%;
+                        }
+                        
+                        .audio-progress .progress-bar {
+                            height: 6px;
+                            background-color: #e0e0e0;
+                            border-radius: 3px;
+                            overflow: hidden;
+                            margin-bottom: 5px;
+                        }
+                        
+                        .audio-progress .progress-fill {
+                            height: 100%;
+                            background-color: #4CAF50;
+                            width: 0%;
+                            transition: width 0.1s linear;
+                        }
+                        
+                        .time-display {
+                            font-size: 0.8rem;
+                            color: #666;
+                            text-align: right;
+                        }
+                        
+                        .quiz-content-scroll {
+                            text-align: left;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 0 20px;
+                        }
+                        
+                        .quiz-instructions {
+                            background-color: #f8f9fa;
+                            border-left: 4px solid #4CAF50;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                            font-weight: 500;
+                            color: #333;
+                            border-radius: 0 4px 4px 0;
+                            text-align: left;
+                        }
+                        
+                        .quiz-question {
+                            margin-bottom: 25px;
+                            padding-bottom: 15px;
+                            border-bottom: 1px solid #eee;
+                            text-align: left;
+                        }
+                        
+                        .question-text {
+                            font-size: 1.1rem;
+                            font-weight: 500;
+                            color: #2c3e50;
+                            margin-bottom: 15px;
+                            text-align: left;
+                        }
+                        
+                        .question-options {
+                            margin-left: 20px;
+                            text-align: left;
+                        }
+                        
+                        .option {
+                            margin-bottom: 12px;
+                            padding: 8px 12px;
+                            border-radius: 4px;
+                            transition: background-color 0.2s;
+                            text-align: left;
+                        }
+                        
+                        .option:hover {
+                            background-color: #f8f9fa;
+                        }
+                        
+                        .option input[type="radio"] {
+                            margin-right: 10px;
+                        }
+                        
+                        .option label {
+                            font-size: 1rem;
+                            color: #444;
+                            cursor: pointer;
+                        }
+                        
+                        .quiz-modal-popup {
+                            border-radius: 8px;
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                        }
+                        
+                        .btn-submit {
+                            background-color: #4CAF50 !important;
+                            color: white !important;
+                            font-weight: 500 !important;
+                            padding: 8px 20px !important;
+                            border-radius: 4px !important;
+                        }
+                        
+                        .btn-close {
+                            background-color: #f8f9fa !important;
+                            color: #333 !important;
+                            font-weight: 500 !important;
+                            padding: 8px 20px !important;
+                            border-radius: 4px !important;
+                            border: 1px solid #ddd !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    // Setup audio functionality for quiz
+                    setupQuizAudioReader(quizContent);
+                },
+                preConfirm: () => {
+                    // Check if all questions are answered
+                    const questions = document.querySelectorAll('.quiz-question');
+                    let allAnswered = true;
+                    let score = 0;
+                    
+                    questions.forEach((question, index) => {
+                        const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                        if (!selectedOption) {
+                            allAnswered = false;
+                        } else {
+                            // Check if the answer is correct
+                            const questionId = question.getAttribute('data-question-id');
+                            const correctAnswer = quizContent.questions[questionId].correctAnswer;
+                            if (parseInt(selectedOption.value) === correctAnswer) {
+                                score++;
+                            }
+                        }
+                    });
+                    
+                    if (!allAnswered) {
+                        Swal.showValidationMessage('Please answer all questions before submitting.');
+                        return false;
+                    }
+                    
+                    // Calculate percentage score
+                    const percentageScore = Math.round((score / questions.length) * 100);
+                    return percentageScore;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Complete the quiz with the calculated score
+                    completeQuiz(lessonId, result.value);
+                }
+            });
+        }
+        
+        // Get quiz content based on lesson ID
+        function getQuizContent(lessonId) {
+            const quizContents = {
+                'quiz1': {
+                    title: 'Forces and Equilibrium',
+                    instructions: 'Please answer all questions. Select the best answer for each question.',
+                    questions: [
+                        {
+                            text: 'Which of the following is NOT a type of force?',
+                            options: [
+                                'Gravitational Force',
+                                'Normal Force',
+                                'Kinetic Force',
+                                'Shear Force'
+                            ],
+                            correctAnswer: 2 // Kinetic Force
+                        },
+                        {
+                            text: 'A 500N force is applied at a 30-degree angle to a horizontal beam. What is the horizontal component of this force?',
+                            options: [
+                                '250N',
+                                '433N',
+                                '500N',
+                                '577N'
+                            ],
+                            correctAnswer: 1 // 433N (500 * cos(30))
+                        },
+                        {
+                            text: 'For a structure to be in translational equilibrium, what must be true?',
+                            options: [
+                                'The sum of all forces in any direction must be zero',
+                                'The sum of all moments about any point must be zero',
+                                'Both A and B',
+                                'Neither A nor B'
+                            ],
+                            correctAnswer: 0 // The sum of all forces in any direction must be zero
+                        },
+                        {
+                            text: 'A cantilever beam is fixed at one end and free at the other. When a load is applied to the free end, what type of reaction does the fixed end provide?',
+                            options: [
+                                'Only a vertical force',
+                                'Only a moment',
+                                'Both a vertical force and a moment',
+                                'Neither a force nor a moment'
+                            ],
+                            correctAnswer: 2 // Both a vertical force and a moment
+                        },
+                        {
+                            text: 'What is the purpose of a free body diagram?',
+                            options: [
+                                'To show the aesthetic design of a structure',
+                                'To show all forces acting on an object',
+                                'To show the construction sequence of a structure',
+                                'To show the cost breakdown of a project'
+                            ],
+                            correctAnswer: 1 // To show all forces acting on an object
+                        }
+                    ]
+                },
+                'quiz2': {
+                    title: 'Structural Analysis and Beams',
+                    instructions: 'Please answer all questions. Select the best answer for each question.',
+                    questions: [
+                        {
+                            text: 'Which method is used to analyze trusses by examining the equilibrium of forces at each joint?',
+                            options: [
+                                'Method of Joints',
+                                'Method of Sections',
+                                'Virtual Work Method',
+                                'Stiffness Method'
+                            ],
+                            correctAnswer: 0 // Method of Joints
+                        },
+                        {
+                            text: 'For a simply supported beam with a uniformly distributed load of 5kN/m over a span of 6m, what is the maximum bending moment?',
+                            options: [
+                                '15kN·m',
+                                '30kN·m',
+                                '45kN·m',
+                                '60kN·m'
+                            ],
+                            correctAnswer: 2 // 45kN·m (5kN/m × 6m² ÷ 8)
+                        },
+                        {
+                            text: 'What is the relationship between the slope of the shear force diagram and the distributed load?',
+                            options: [
+                                'The slope is equal to the distributed load',
+                                'The slope is equal to the negative of the distributed load',
+                                'The slope is equal to the integral of the distributed load',
+                                'There is no relationship between the slope and the distributed load'
+                            ],
+                            correctAnswer: 1 // The slope is equal to the negative of the distributed load
+                        },
+                        {
+                            text: 'Which method is used to calculate beam deflection by integrating the differential equation of the elastic curve twice?',
+                            options: [
+                                'Moment-Area Method',
+                                'Conjugate Beam Method',
+                                'Virtual Work Method',
+                                'Double Integration Method'
+                            ],
+                            correctAnswer: 3 // Double Integration Method
+                        },
+                        {
+                            text: 'What is the maximum allowable deflection for a residential floor joist, typically expressed as a fraction of the span?',
+                            options: [
+                                'Span/180',
+                                'Span/240',
+                                'Span/360',
+                                'Span/480'
+                            ],
+                            correctAnswer: 2 // Span/360
+                        }
+                    ]
+                }
+            };
+            
+            return quizContents[lessonId] || {
+                title: 'Quiz Content',
+                instructions: 'Please answer all questions.',
+                questions: [
+                    {
+                        text: 'Sample question?',
+                        options: ['Option A', 'Option B', 'Option C', 'Option D'],
+                        correctAnswer: 0
+                    }
+                ]
+            };
+        }
+        
+        // Complete a lesson
+        function completeLesson(lessonId) {
+            const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+            const courseProgressKey = `courseProgress_SE101_${userEmail}`;
+            const courseProgress = JSON.parse(localStorage.getItem(courseProgressKey) || '{"completedLessons": [], "quizScores": {}}');
+            
+            // Add lesson to completed lessons if not already completed
+            if (!courseProgress.completedLessons.includes(lessonId)) {
+                courseProgress.completedLessons.push(lessonId);
+                localStorage.setItem(courseProgressKey, JSON.stringify(courseProgress));
+                
+                // Update UI
+                const lessonCard = document.querySelector(`.lesson-card[data-lesson-id="${lessonId}"]`);
+                lessonCard.classList.remove('locked');
+                const statusElement = lessonCard.querySelector('.lesson-status');
+                statusElement.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                statusElement.classList.remove('pending', 'locked');
+                statusElement.classList.add('completed');
+                
+                // Define lesson prerequisites
+                const prerequisites = {
+                    '1': [], // Lesson 1 has no prerequisites
+                    '2': ['1'], // Lesson 2 requires Lesson 1
+                    'quiz1': ['1', '2'], // Quiz 1 requires Lessons 1 and 2
+                    '3': ['quiz1'], // Lesson 3 requires Quiz 1
+                    '4': ['3'], // Lesson 4 requires Lesson 3
+                    'quiz2': ['3', '4'] // Quiz 2 requires Lessons 3 and 4
+                };
+                
+                // Check which lessons can now be unlocked
+                Object.keys(prerequisites).forEach(nextLessonId => {
+                    if (!courseProgress.completedLessons.includes(nextLessonId)) {
+                        const allPrerequisitesCompleted = prerequisites[nextLessonId].every(prereq => 
+                            courseProgress.completedLessons.includes(prereq)
+                        );
+                        
+                        if (allPrerequisitesCompleted) {
+                            const nextLessonCard = document.querySelector(`.lesson-card[data-lesson-id="${nextLessonId}"]`);
+                            if (nextLessonCard) {
+                                nextLessonCard.classList.remove('locked');
+                                const nextStatusElement = nextLessonCard.querySelector('.lesson-status');
+                                nextStatusElement.innerHTML = '<i class="fas fa-clock"></i> Pending';
+                                nextStatusElement.classList.remove('locked');
+                                nextStatusElement.classList.add('pending');
+                                const nextButton = nextLessonCard.querySelector('.btn-start');
+                                nextButton.disabled = false;
+                            }
+                        }
+                    }
+                });
+                
+                // Update progress bar
+                const totalLessons = 6; // Total number of lessons and quizzes
+                const completedLessons = courseProgress.completedLessons.length;
+                const progressPercentage = Math.round((completedLessons / totalLessons) * 100);
+                
+                document.querySelector('.progress-percentage').textContent = `${progressPercentage}%`;
+                document.querySelector('.progress-fill').style.width = `${progressPercentage}%`;
+                
+                // Show success notification
+                showNotification(`Lesson ${lessonId} completed successfully!`, 'success');
+            }
+        }
+        
+        // Complete a quiz
+        function completeQuiz(lessonId, score) {
+            const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+            const courseProgressKey = `courseProgress_SE101_${userEmail}`;
+            const courseProgress = JSON.parse(localStorage.getItem(courseProgressKey) || '{"completedLessons": [], "quizScores": {}}');
+            
+            // Add quiz to completed lessons if not already completed
+            if (!courseProgress.completedLessons.includes(lessonId)) {
+                courseProgress.completedLessons.push(lessonId);
+                courseProgress.quizScores[lessonId] = score;
+                localStorage.setItem(courseProgressKey, JSON.stringify(courseProgress));
+                
+                // Update UI
+                const quizCard = document.querySelector(`.lesson-card[data-lesson-id="${lessonId}"]`);
+                quizCard.classList.remove('locked');
+                const statusElement = quizCard.querySelector('.lesson-status');
+                statusElement.innerHTML = `<i class="fas fa-check-circle"></i> Completed (${score}%)`;
+                statusElement.classList.remove('pending', 'locked');
+                statusElement.classList.add('completed');
+                
+                // Define lesson prerequisites
+                const prerequisites = {
+                    '1': [], // Lesson 1 has no prerequisites
+                    '2': ['1'], // Lesson 2 requires Lesson 1
+                    'quiz1': ['1', '2'], // Quiz 1 requires Lessons 1 and 2
+                    '3': ['quiz1'], // Lesson 3 requires Quiz 1
+                    '4': ['3'], // Lesson 4 requires Lesson 3
+                    'quiz2': ['3', '4'] // Quiz 2 requires Lessons 3 and 4
+                };
+                
+                // Check which lessons can now be unlocked
+                Object.keys(prerequisites).forEach(nextLessonId => {
+                    if (!courseProgress.completedLessons.includes(nextLessonId)) {
+                        const allPrerequisitesCompleted = prerequisites[nextLessonId].every(prereq => 
+                            courseProgress.completedLessons.includes(prereq)
+                        );
+                        
+                        if (allPrerequisitesCompleted) {
+                            const nextLessonCard = document.querySelector(`.lesson-card[data-lesson-id="${nextLessonId}"]`);
+                            if (nextLessonCard) {
+                                nextLessonCard.classList.remove('locked');
+                                const nextStatusElement = nextLessonCard.querySelector('.lesson-status');
+                                nextStatusElement.innerHTML = '<i class="fas fa-clock"></i> Pending';
+                                nextStatusElement.classList.remove('locked');
+                                nextStatusElement.classList.add('pending');
+                                const nextButton = nextLessonCard.querySelector('.btn-start');
+                                nextButton.disabled = false;
+                            }
+                        }
+                    }
+                });
+                
+                // Update progress bar
+                const totalLessons = 6; // Total number of lessons and quizzes
+                const completedLessons = courseProgress.completedLessons.length;
+                const progressPercentage = Math.round((completedLessons / totalLessons) * 100);
+                
+                document.querySelector('.progress-percentage').textContent = `${progressPercentage}%`;
+                document.querySelector('.progress-fill').style.width = `${progressPercentage}%`;
+                
+                // Show success notification
+                showNotification(`Quiz ${lessonId} completed with a score of ${score}%!`, 'success');
+            }
+        }
+        
+        // Show notification using SweetAlert2
+        function showNotification(message, type = 'success') {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: type,
+                title: message,
+                background: type === 'success' ? '#4CAF50' : '#f44336',
+                color: '#fff',
+                iconColor: '#fff',
+                customClass: {
+                    popup: 'animated fadeInDown'
+                }
+            });
+        }
+        
+        // Setup audio reader for lesson content
+        function setupAudioReader(content) {
+            const audioBtn = document.getElementById('audioToggle');
+            const audioProgress = document.querySelector('.audio-progress');
+            const progressFill = document.querySelector('.audio-progress .progress-fill');
+            const timeDisplay = document.querySelector('.time-display');
+            
+            // Create a temporary div to extract text content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            
+            // Extract text content, removing HTML tags
+            const textContent = tempDiv.innerText || tempDiv.textContent;
+            
+            // Create speech synthesis utterance
+            const utterance = new SpeechSynthesisUtterance(textContent);
+            utterance.rate = 0.9; // Slightly slower than normal
+            utterance.pitch = 1.0; // Normal pitch
+            
+            // Get available voices
+            const voices = window.speechSynthesis.getVoices();
+            
+            // Try to find a female voice
+            const femaleVoice = voices.find(voice => 
+                voice.name.includes('female') || 
+                voice.name.includes('Female') || 
+                voice.name.includes('Samantha') || 
+                voice.name.includes('Google US English Female')
+            );
+            
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+            
+            let isPlaying = false;
+            let startTime = 0;
+            let duration = 0;
+            let timer = null;
+            
+            // Toggle audio playback
+            audioBtn.addEventListener('click', function() {
+                if (isPlaying) {
+                    // Stop playback
+                    window.speechSynthesis.cancel();
+                    clearInterval(timer);
+                    audioBtn.innerHTML = '<i class="fas fa-volume-up"></i> Listen to Lesson';
+                    audioBtn.classList.remove('playing');
+                    audioProgress.style.display = 'none';
+                    isPlaying = false;
+                } else {
+                    // Start playback
+                    window.speechSynthesis.cancel(); // Cancel any existing speech
+                    window.speechSynthesis.speak(utterance);
+                    audioBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Listening';
+                    audioBtn.classList.add('playing');
+                    audioProgress.style.display = 'block';
+                    isPlaying = true;
+                    
+                    // Start progress tracking
+                    startTime = Date.now();
+                    
+                    // Estimate duration (approximate)
+                    const wordsPerMinute = 150;
+                    const wordCount = textContent.split(/\s+/).length;
+                    duration = (wordCount / wordsPerMinute) * 60 * 1000; // in milliseconds
+                    
+                    // Update progress bar
+                    timer = setInterval(() => {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        progressFill.style.width = `${progress * 100}%`;
+                        
+                        // Update time display
+                        const elapsedSeconds = Math.floor(elapsed / 1000);
+                        const totalSeconds = Math.floor(duration / 1000);
+                        timeDisplay.textContent = `${formatTime(elapsedSeconds)} / ${formatTime(totalSeconds)}`;
+                        
+                        // Stop when complete
+                        if (elapsed >= duration) {
+                            clearInterval(timer);
+                            audioBtn.innerHTML = '<i class="fas fa-volume-up"></i> Listen to Lesson';
+                            audioBtn.classList.remove('playing');
+                            isPlaying = false;
+                        }
+                    }, 100);
+                }
+            });
+            
+            // Handle speech synthesis events
+            utterance.onend = function() {
+                clearInterval(timer);
+                audioBtn.innerHTML = '<i class="fas fa-volume-up"></i> Listen to Lesson';
+                audioBtn.classList.remove('playing');
+                isPlaying = false;
+            };
+            
+            // Format time as MM:SS
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        // Setup audio reader for quiz content
+        function setupQuizAudioReader(quizContent) {
+            const audioBtn = document.getElementById('audioToggle');
+            const audioProgress = document.querySelector('.audio-progress');
+            const progressFill = document.querySelector('.audio-progress .progress-fill');
+            const timeDisplay = document.querySelector('.time-display');
+            
+            // Prepare text content for reading
+            let textContent = quizContent.instructions + ". ";
+            
+            // Add questions and options
+            quizContent.questions.forEach((question, index) => {
+                textContent += `Question ${index + 1}: ${question.text}. Options: `;
+                question.options.forEach((option, optionIndex) => {
+                    textContent += `Option ${optionIndex + 1}: ${option}. `;
+                });
+            });
+            
+            // Create speech synthesis utterance
+            const utterance = new SpeechSynthesisUtterance(textContent);
+            utterance.rate = 0.9; // Slightly slower than normal
+            utterance.pitch = 1.0; // Normal pitch
+            
+            // Get available voices
+            const voices = window.speechSynthesis.getVoices();
+            
+            // Try to find a female voice
+            const femaleVoice = voices.find(voice => 
+                voice.name.includes('female') || 
+                voice.name.includes('Female') || 
+                voice.name.includes('Samantha') || 
+                voice.name.includes('Google US English Female')
+            );
+            
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+            
+            let isPlaying = false;
+            let startTime = 0;
+            let duration = 0;
+            let timer = null;
+            
+            // Toggle audio playback
+            audioBtn.addEventListener('click', function() {
+                if (isPlaying) {
+                    // Stop playback
+                    window.speechSynthesis.cancel();
+                    clearInterval(timer);
+                    audioBtn.innerHTML = '<i class="fas fa-volume-up"></i> Listen to Quiz';
+                    audioBtn.classList.remove('playing');
+                    audioProgress.style.display = 'none';
+                    isPlaying = false;
+                } else {
+                    // Start playback
+                    window.speechSynthesis.cancel(); // Cancel any existing speech
+                    window.speechSynthesis.speak(utterance);
+                    audioBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Listening';
+                    audioBtn.classList.add('playing');
+                    audioProgress.style.display = 'block';
+                    isPlaying = true;
+                    
+                    // Start progress tracking
+                    startTime = Date.now();
+                    
+                    // Estimate duration (approximate)
+                    const wordsPerMinute = 150;
+                    const wordCount = textContent.split(/\s+/).length;
+                    duration = (wordCount / wordsPerMinute) * 60 * 1000; // in milliseconds
+                    
+                    // Update progress bar
+                    timer = setInterval(() => {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        progressFill.style.width = `${progress * 100}%`;
+                        
+                        // Update time display
+                        const elapsedSeconds = Math.floor(elapsed / 1000);
+                        const totalSeconds = Math.floor(duration / 1000);
+                        timeDisplay.textContent = `${formatTime(elapsedSeconds)} / ${formatTime(totalSeconds)}`;
+                        
+                        // Stop when complete
+                        if (elapsed >= duration) {
+                            clearInterval(timer);
+                            audioBtn.innerHTML = '<i class="fas fa-volume-up"></i> Listen to Quiz';
+                            audioBtn.classList.remove('playing');
+                            isPlaying = false;
+                        }
+                    }, 100);
+                }
+            });
+            
+            // Handle speech synthesis events
+            utterance.onend = function() {
+                clearInterval(timer);
+                audioBtn.innerHTML = '<i class="fas fa-volume-up"></i> Listen to Quiz';
+                audioBtn.classList.remove('playing');
+                isPlaying = false;
+            };
+            
+            // Format time as MM:SS
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+    </script>
+</body>
+</html> 

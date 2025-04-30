@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details - CiviLearn</title>
+    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .course-header {
+            background: linear-gradient(135deg, #4a6bff 0%, #2541b2 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .course-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .course-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .course-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .course-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .course-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .course-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 1rem;
+        }
+        
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #666;
+            transition: color 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: #4a6bff;
+            border-bottom: 2px solid #4a6bff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .material-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .material-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .material-icon {
+            font-size: 2rem;
+            color: #4a6bff;
+            margin-bottom: 1rem;
+        }
+        
+        .material-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .material-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .material-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #4a6bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2541b2;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .no-content {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        /* Notification Banner Styles */
+        .notification-banner {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4a6bff;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .notification-content i {
+            font-size: 1.5rem;
+            color: #4a6bff;
+        }
+        
+        .notification-text {
+            flex: 1;
+        }
+        
+        .notification-text h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        
+        .notification-text p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .close-notification {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.25rem;
+        }
+        
+        .close-notification:hover {
+            color: #666;
+        }
+        
+        .material-status {
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .material-status-details {
+            text-align: left;
+            margin: 1rem 0;
+        }
+        
+        .material-status-details p {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>CiviLearn</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#courses">Courses</a>
+            <a href="index.html#ebooks">Resources</a>
+            <a href="index.html#forum">Forum</a>
+            <a href="index.html#study-space">Study Space</a>
+        </div>
+        <div class="auth-buttons">
+            <a href="login.html" class="login-btn">Login</a>
+            <a href="signup.html" class="signup-btn">Sign Up</a>
+        </div>
+        <div class="profile-section" style="display: none;">
+            <div class="profile-dropdown">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <span class="user-fullname"></span>
+                </div>
+                <div class="dropdown-content">
+                    <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="#" class="dropdown-item logout-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Course Header -->
+    <header class="course-header">
+        <div class="course-content">
+            <h1 class="course-title" id="course-title">Loading...</h1>
+            <div class="course-meta">
+                <span><i class="fas fa-book"></i> <span id="course-category">Loading...</span></span>
+                <span><i class="fas fa-user"></i> <span id="course-students">0</span> students</span>
+            </div>
+            <p class="course-description" id="course-description">Loading...</p>
+            <div class="course-actions">
+                <button id="enroll-button" class="btn btn-primary" onclick="enrollInCourse()" style="display: none;">
+                    <i class="fas fa-user-plus"></i> Enroll Now
+                </button>
+                <button id="view-materials-button" class="btn btn-success" onclick="viewMaterials()" style="display: none;">
+                    <i class="fas fa-book"></i> View Materials
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Course Content -->
+    <main class="course-content" id="course-content" style="display: none;">
+        <div class="course-tabs">
+            <button class="tab-btn active" data-tab="materials">Materials</button>
+            <button class="tab-btn" data-tab="videos">Videos</button>
+        </div>
+
+        <!-- Enrollment Request Notification -->
+        <div id="enrollment-notification" class="notification-banner" style="display: none;">
+            <div class="notification-content">
+                <i class="fas fa-info-circle"></i>
+                <div class="notification-text">
+                    <h4 id="enrollment-notification-title"></h4>
+                    <p id="enrollment-notification-message"></p>
+                </div>
+                <button class="close-notification" onclick="document.getElementById('enrollment-notification').style.display='none';">&times;</button>
+            </div>
+        </div>
+
+        <!-- Materials Tab -->
+        <div class="tab-content active" id="materials-tab">
+            <div class="materials-grid" id="materials-grid">
+                <!-- Materials will be loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Videos Tab -->
+        <div class="tab-content" id="videos-tab">
+            <div id="videos-container">
+                <!-- Videos will be loaded dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication state
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+            const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+            const userFullName = localStorage.getItem('userFullName') || sessionStorage.getItem('userFullName');
+            
+            console.log('Course details page - Login state:', {
+                isLoggedIn,
+                userId,
+                userEmail,
+                userFullName
+            });
+            
+            if (isLoggedIn && userId && userEmail && userFullName) {
+                // User is logged in, update UI
+                document.querySelector('.auth-buttons').style.display = 'none';
+                document.querySelector('.profile-section').style.display = 'flex';
+                document.querySelector('.user-fullname').textContent = userFullName;
+                
+                // Store complete user session
+                const userSession = {
+                    id: userId,
+                    email: userEmail,
+                    name: userFullName,
+                    isLoggedIn: true
+                };
+                
+                // Ensure login state is set in both storages
+                localStorage.setItem('userSession', JSON.stringify(userSession));
+                localStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userId', userId);
+                sessionStorage.setItem('userId', userId);
+                localStorage.setItem('userEmail', userEmail);
+                sessionStorage.setItem('userEmail', userEmail);
+                localStorage.setItem('userFullName', userFullName);
+                sessionStorage.setItem('userFullName', userFullName);
+            } else {
+                // User is not logged in, show login buttons
+                document.querySelector('.auth-buttons').style.display = 'flex';
+                document.querySelector('.profile-section').style.display = 'none';
+                
+                // Clear any incomplete session data
+                localStorage.removeItem('userSession');
+                localStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userId');
+                sessionStorage.removeItem('userId');
+                localStorage.removeItem('userEmail');
+                sessionStorage.removeItem('userEmail');
+                localStorage.removeItem('userFullName');
+                sessionStorage.removeItem('userFullName');
+            }
+            
+            // Get course ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('id');
+            
+            if (!courseId) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Load course details
+            loadCourseDetails(courseId);
+            
+            // Setup tab switching
+            setupTabs();
+            
+            // Setup enrollment status monitoring
+            setupEnrollmentStatusMonitoring(courseId);
+            
+            // Initialize materials
+            initializeMaterials();
+        });
+        
+        function loadCourseDetails(courseId) {
+            const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+            const course = courses.find(c => c.id === courseId);
+            
+            if (!course) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Course Not Found',
+                    text: 'The requested course could not be found.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+                return;
+            }
+            
+            // Update course details
+            document.getElementById('course-title').textContent = course.title;
+            document.getElementById('course-category').textContent = course.category;
+            document.getElementById('course-students').textContent = course.enrolledStudents ? course.enrolledStudents.length : 0;
+            document.getElementById('course-description').textContent = course.description || 'No description available';
+            
+            // Update enrollment UI
+            updateEnrollmentUI(courseId);
+            
+            // Load materials and videos if user is enrolled
+            if (document.getElementById('course-content').style.display === 'block') {
+                    loadMaterials(course);
+                    loadVideos(course);
+            }
+        }
+        
+        function loadMaterials(course) {
+            try {
+                console.log('Loading materials for course:', course);
+            const materialsGrid = document.getElementById('materials-grid');
+            
+                if (!materialsGrid) {
+                    console.error('Materials grid element not found');
+                    return;
+                }
+
+                // Get materials from both course.materials and localStorage
+                let materials = [];
+                
+                // Get materials from course object
+                if (course.materials && Array.isArray(course.materials)) {
+                    console.log('Course materials:', course.materials);
+                    materials = course.materials.map(m => {
+                        console.log('Processing course material:', m);
+                        // Check and recover file data if missing
+                        const materialWithData = checkMaterialData(m);
+                        return {
+                            ...materialWithData,
+                            source: 'course'
+                        };
+                    });
+                }
+                
+                // Get materials from localStorage
+                const storedMaterials = JSON.parse(localStorage.getItem('courseMaterials') || '[]');
+                console.log('Stored materials:', storedMaterials);
+                const courseMaterials = storedMaterials
+                    .filter(m => m.courseId === course.id)
+                    .map(m => {
+                        console.log('Processing stored material:', m);
+                        // Check and recover file data if missing
+                        const materialWithData = checkMaterialData(m);
+                        return {
+                            ...materialWithData,
+                            source: 'storage'
+                        };
+                    });
+                
+                // Combine both sources of materials and remove duplicates
+                materials = [...materials];
+                courseMaterials.forEach(storedMaterial => {
+                    if (!materials.some(m => m.id === storedMaterial.id)) {
+                        materials.push(storedMaterial);
+                    }
+                });
+                
+                console.log('Combined materials:', materials);
+                
+                if (!materials || materials.length === 0) {
+                materialsGrid.innerHTML = `
+                    <div class="no-content">
+                        <i class="fas fa-file-alt" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                        <p>No materials available for this course yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+                materialsGrid.innerHTML = materials.map(material => {
+                    const fileData = material.fileData || material.data || material.content;
+                    const hasFileData = !!fileData;
+                    console.log('Rendering material:', material.title || material.name, 'Has file data:', hasFileData);
+                    
+                    return `
+                <div class="material-card">
+                    <div class="material-icon">
+                                <i class="fas ${getFileIcon(material.type || getFileTypeFromName(material.fileName || material.name))}"></i>
+                    </div>
+                            <h3 class="material-title">${material.title || material.name}</h3>
+                    <div class="material-meta">
+                                <span><i class="fas fa-calendar"></i> ${new Date(material.uploadDate).toLocaleDateString()}</span>
+                                ${material.size ? `<span><i class="fas fa-file"></i> ${formatFileSize(material.size)}</span>` : ''}
+                                ${material.description ? `<p class="material-description">${material.description}</p>` : ''}
+                    </div>
+                    <div class="material-actions">
+                                <button class="btn btn-primary" onclick="downloadMaterial('${material.id}', '${course.id}', '${material.source}')" ${!hasFileData ? 'disabled' : ''}>
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                                ${!hasFileData ? `
+                                    <div class="material-status status-error">
+                                        <i class="fas fa-exclamation-circle"></i> File data missing
+                    </div>
+                                ` : ''}
+                                <button class="btn btn-info" onclick="showMaterialDataStatus('${material.id}', '${course.id}', '${material.source}')">
+                                    <i class="fas fa-info-circle"></i> Check Status
+                                </button>
+                </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading materials:', error);
+                const materialsGrid = document.getElementById('materials-grid');
+                if (materialsGrid) {
+                    materialsGrid.innerHTML = `
+                    <div class="no-content">
+                            <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;"></i>
+                            <p>Error loading materials. Please try refreshing the page.</p>
+                    </div>
+                `;
+                }
+            }
+        }
+        
+        function getFileIcon(type) {
+            const icons = {
+                'pdf': 'fa-file-pdf',
+                'doc': 'fa-file-word',
+                'docx': 'fa-file-word',
+                'ppt': 'fa-file-powerpoint',
+                'pptx': 'fa-file-powerpoint',
+                'xls': 'fa-file-excel',
+                'xlsx': 'fa-file-excel',
+                'txt': 'fa-file-alt',
+                'zip': 'fa-file-archive',
+                'rar': 'fa-file-archive',
+                'image': 'fa-file-image',
+                'video': 'fa-file-video',
+                'audio': 'fa-file-audio',
+                'other': 'fa-file'
+            };
+            return icons[type] || icons.default;
+        }
+        
+        function getFileTypeFromName(fileName) {
+            if (!fileName) return 'other';
+            const extension = fileName.split('.').pop().toLowerCase();
+            const typeMap = {
+                'pdf': 'pdf',
+                'doc': 'doc',
+                'docx': 'doc',
+                'ppt': 'ppt',
+                'pptx': 'ppt',
+                'xls': 'xls',
+                'xlsx': 'xls',
+                'txt': 'txt',
+                'zip': 'zip',
+                'rar': 'zip',
+                'mp4': 'video',
+                'avi': 'video',
+                'mov': 'video',
+                'jpg': 'image',
+                'jpeg': 'image',
+                'png': 'image',
+                'gif': 'image',
+                'mp3': 'audio',
+                'wav': 'audio'
+            };
+            return typeMap[extension] || 'other';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function downloadMaterial(materialId, courseId, source) {
+            try {
+                console.log('Downloading material:', { materialId, courseId, source });
+                let material;
+                
+                if (source === 'course') {
+                    // Get material from course object
+                    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+                    const course = courses.find(c => c.id === courseId);
+                    material = course?.materials?.find(m => m.id === materialId);
+                    console.log('Found course material:', material);
+                } else {
+                    // Get material from localStorage
+                    const storedMaterials = JSON.parse(localStorage.getItem('courseMaterials') || '[]');
+                    material = storedMaterials.find(m => m.id === materialId && m.courseId === courseId);
+                    console.log('Found stored material:', material);
+                }
+                
+                if (!material) {
+                    throw new Error('Material not found');
+                }
+
+                // Try to get file data from different possible properties
+                const fileData = material.fileData || material.data || material.content;
+                console.log('File data found:', !!fileData);
+                
+                if (!fileData) {
+                    // Try to recover file data
+                    const recoveredMaterial = checkMaterialData(material);
+                    if (!recoveredMaterial.fileData && !recoveredMaterial.data && !recoveredMaterial.content) {
+                        throw new Error('File data not available. Please contact the course instructor.');
+                    }
+                    material = recoveredMaterial;
+                }
+
+                // Create a Blob and download the file
+                try {
+                    let blob;
+                    if (fileData instanceof Blob) {
+                        blob = fileData;
+                    } else {
+                        // Handle base64 data
+                        const base64Data = fileData.split(',')[1] || fileData;
+                        const byteCharacters = atob(base64Data);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        blob = new Blob([byteArray], { type: material.type || 'application/octet-stream' });
+                    }
+
+                    // Create and trigger download
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = material.fileName || material.name || 'download';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(link.href);
+
+                    // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Download Started',
+                        text: `Downloading ${material.title || material.name}`,
+                timer: 1500,
+                showConfirmButton: false
+            });
+                } catch (e) {
+                    console.error('Error processing file data:', e);
+                    throw new Error('Error processing file data. The file may be corrupted.');
+                }
+            } catch (error) {
+                console.error('Error downloading material:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Download Error',
+                    text: error.message || 'There was an error downloading the material. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+        
+        function loadVideos(course) {
+            const videosContainer = document.getElementById('videos-container');
+            
+            if (!course.videos || course.videos.length === 0) {
+                videosContainer.innerHTML = `
+                    <div class="no-content">
+                        <i class="fas fa-video" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                        <p>No videos available for this course yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            videosContainer.innerHTML = course.videos.map(video => `
+                <div class="video-item">
+                    <div class="video-container">
+                        <iframe src="${video.url}" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h3>${video.title}</h3>
+                        <p>${video.description || ''}</p>
+                        <div class="video-meta">
+                            <span><i class="fas fa-clock"></i> ${video.duration || 'N/A'}</span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(video.uploadDate).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function setupTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+        }
+        
+        function enrollInCourse() {
+            try {
+                // Check if user is logged in
+                const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+                const userId = userSession.id;
+                const userEmail = userSession.email;
+                const userFullName = userSession.name;
+                
+                if (!userId || !userEmail || !userFullName) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Login Required',
+                        text: 'Please log in to enroll in this course.',
+                        showCancelButton: true,
+                        confirmButtonText: 'Login Now',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'login.html';
+                        }
+                    });
+                    return;
+                }
+
+                // Check subscription status
+                const subscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+                const activeSubscription = subscriptions.find(sub => 
+                    sub.userId === userId && 
+                    sub.status === 'active' && 
+                    new Date(sub.expiryDate) > new Date()
+                );
+
+                if (!activeSubscription) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Subscription Required',
+                        html: `
+                            <div>
+                                <p>You need an active subscription to enroll in courses.</p>
+                                <p>Please subscribe to a plan to continue.</p>
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Subscribe Now',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'subscription.html';
+                        }
+                    });
+                    return;
+                }
+
+                // Get course ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const courseId = urlParams.get('id');
+                
+                if (!courseId) {
+                    throw new Error('Course ID not found');
+                }
+                
+                // Get course from localStorage
+                const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+                const course = courses.find(c => c.id === courseId);
+                
+                if (!course) {
+                    throw new Error('Course not found');
+                }
+
+                // Check if already enrolled
+                if (course.enrolledStudents && course.enrolledStudents.includes(userId)) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Already Enrolled',
+                        text: 'You are already enrolled in this course.',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                
+                // Check if there's already a pending request
+                const enrollmentRequests = JSON.parse(localStorage.getItem('enrollmentRequests') || '[]');
+                const existingRequest = enrollmentRequests.find(req => 
+                    req.studentId === userId && 
+                    req.courseId === courseId && 
+                    req.status === 'pending'
+                );
+
+                if (existingRequest) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Request Pending',
+                        text: 'You already have a pending enrollment request for this course.',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                // Create new enrollment request
+                const newRequest = {
+                    id: 'req_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                    studentId: userId,
+                    studentName: userFullName,
+                    studentEmail: userEmail,
+                    courseId: courseId,
+                    courseTitle: course.title,
+                    teacherId: course.teacherId,
+                    status: 'pending',
+                    requestDate: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Add request to enrollmentRequests
+                enrollmentRequests.push(newRequest);
+                localStorage.setItem('enrollmentRequests', JSON.stringify(enrollmentRequests));
+                
+                // Set the last update timestamp to trigger updates in the teacher dashboard
+                localStorage.setItem('lastEnrollmentUpdate', new Date().toISOString());
+                
+                // Create a notification for the teacher
+                const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+                const teacherNotification = {
+                    id: 'notif_' + Date.now(),
+                    type: 'enrollment_request',
+                    title: 'New Enrollment Request',
+                    message: `${userFullName} has requested to enroll in ${course.title}`,
+                    courseId: courseId,
+                    studentId: userId,
+                    requestId: newRequest.id,
+                    createdAt: new Date().toISOString(),
+                    read: false
+                };
+                notifications.push(teacherNotification);
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+                localStorage.setItem('newNotificationCreated', 'true');
+                
+                // Dispatch a custom event to notify other tabs/windows
+                const enrollmentEvent = new CustomEvent('enrollmentRequestCreated', {
+                    detail: { requestId: newRequest.id }
+                });
+                window.dispatchEvent(enrollmentEvent);
+                
+                // Also dispatch a storage event manually (since it doesn't fire in the same window)
+                const storageEvent = new StorageEvent('storage', {
+                    key: 'enrollmentRequests',
+                    newValue: JSON.stringify(enrollmentRequests)
+                });
+                window.dispatchEvent(storageEvent);
+                
+                // Show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Enrollment Request Sent',
+                    text: 'Your enrollment request has been sent to the course instructor. You will be notified once it is approved.',
+                    timer: 3000,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Update UI to show pending status
+                    updateEnrollmentUI(courseId);
+                });
+
+            } catch (error) {
+                console.error('Error sending enrollment request:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Request Error',
+                    text: 'There was an error sending your enrollment request. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+        
+        function viewMaterials() {
+            // Show materials tab
+            const materialsTab = document.querySelector('[data-tab="materials"]');
+            if (materialsTab) {
+                materialsTab.click();
+            }
+        }
+
+        // Add this helper function to check subscription status
+function checkSubscriptionStatus(userId) {
+    const subscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+    return subscriptions.find(sub => 
+        sub.userId === userId && 
+        sub.status === 'active' && 
+        new Date(sub.expiryDate) > new Date()
+    );
+}
+
+        function updateEnrollmentUI(courseId) {
+            const enrollButton = document.getElementById('enroll-button');
+            const viewMaterialsButton = document.getElementById('view-materials-button');
+            const courseContent = document.getElementById('course-content');
+            const enrollmentNotification = document.getElementById('enrollment-notification');
+            const notificationTitle = document.getElementById('enrollment-notification-title');
+            const notificationMessage = document.getElementById('enrollment-notification-message');
+            
+            // Get current user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            const userId = userSession.id;
+
+            if (!userId || !courseId) {
+                // Show enroll button for non-logged in users or missing course ID
+                enrollButton.style.display = 'block';
+                viewMaterialsButton.style.display = 'none';
+                courseContent.style.display = 'none';
+                return;
+            }
+
+            // Check subscription status
+            const subscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+            const hasActiveSubscription = subscriptions.some(sub => 
+                sub.userId === userId && 
+                sub.status === 'active' && 
+                new Date(sub.expiryDate) > new Date()
+            );
+
+            // Get course from localStorage
+            const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+            const course = courses.find(c => c.id === courseId);
+            
+            if (!course) {
+                console.error('Course not found:', courseId);
+                return;
+            }
+
+            // Check if user is enrolled
+            const isEnrolled = course.enrolledStudents && course.enrolledStudents.includes(userId);
+            
+            // Check enrollment request status
+            const enrollmentRequests = JSON.parse(localStorage.getItem('enrollmentRequests') || '[]');
+            const userRequest = enrollmentRequests.find(req => 
+                req.studentId === userId && 
+                req.courseId === courseId
+            );
+
+            if (!hasActiveSubscription && !isEnrolled) {
+                // User needs subscription
+                enrollButton.style.display = 'block';
+                enrollButton.textContent = 'Subscribe to Enroll';
+                enrollButton.onclick = () => window.location.href = 'subscription.html';
+                viewMaterialsButton.style.display = 'none';
+                courseContent.style.display = 'none';
+                
+                if (enrollmentNotification) {
+                    enrollmentNotification.style.display = 'block';
+                    notificationTitle.textContent = 'Subscription Required';
+                    notificationMessage.textContent = 'You need an active subscription to enroll in this course.';
+                }
+                return;
+            }
+            
+            if (isEnrolled) {
+                // User is enrolled
+                enrollButton.style.display = 'none';
+                viewMaterialsButton.style.display = 'block';
+                courseContent.style.display = 'block';
+                
+                if (enrollmentNotification) {
+                    enrollmentNotification.style.display = 'none';
+                }
+                
+                // Load materials and videos
+                loadMaterials(course);
+                loadVideos(course);
+            } else if (userRequest) {
+                // Handle based on request status
+                if (userRequest.status === 'approved') {
+                    enrollButton.style.display = 'none';
+                    viewMaterialsButton.style.display = 'block';
+                    courseContent.style.display = 'block';
+                    
+                    // Load materials and videos
+                    loadMaterials(course);
+                    loadVideos(course);
+                    
+                    if (enrollmentNotification) {
+                        enrollmentNotification.style.display = 'block';
+                        notificationTitle.textContent = 'Enrollment Approved';
+                        notificationMessage.textContent = 'Your enrollment has been approved. You can now access all course materials.';
+                    }
+                } else if (userRequest.status === 'pending') {
+                    enrollButton.style.display = 'block';
+                    enrollButton.textContent = 'Request Pending';
+                    enrollButton.disabled = true;
+                    viewMaterialsButton.style.display = 'none';
+                    courseContent.style.display = 'none';
+                    
+                    if (enrollmentNotification) {
+                        enrollmentNotification.style.display = 'block';
+                        notificationTitle.textContent = 'Enrollment Request Pending';
+                        notificationMessage.textContent = 'Your enrollment request is being reviewed by the instructor.';
+                    }
+                } else if (userRequest.status === 'rejected') {
+                    enrollButton.style.display = 'block';
+                    enrollButton.textContent = 'Request Rejected';
+                    enrollButton.disabled = true;
+                    viewMaterialsButton.style.display = 'none';
+                    courseContent.style.display = 'none';
+                    
+                    if (enrollmentNotification) {
+                        enrollmentNotification.style.display = 'block';
+                        notificationTitle.textContent = 'Enrollment Request Rejected';
+                        notificationMessage.textContent = 'Your enrollment request was not approved. You can try enrolling again.';
+                    }
+                }
+            } else {
+                // No enrollment or request
+                enrollButton.style.display = 'block';
+                enrollButton.textContent = 'Enroll Now';
+                enrollButton.disabled = false;
+                viewMaterialsButton.style.display = 'none';
+                courseContent.style.display = 'none';
+                
+                if (enrollmentNotification) {
+                    enrollmentNotification.style.display = 'none';
+                }
+            }
+        }
+
+        function setupEnrollmentStatusMonitoring(courseId) {
+            // Get current user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            const userId = userSession.id;
+
+            // Track if approval notification has been shown
+            const approvalNotificationKey = `enrollment_approved_notified_${courseId}_${userId}`;
+            let hasShownApprovalNotification = localStorage.getItem(approvalNotificationKey) === 'true';
+
+            // Function to check enrollment status
+            function checkEnrollmentStatus() {
+                const enrollmentRequests = JSON.parse(localStorage.getItem('enrollmentRequests') || '[]');
+                const userRequest = enrollmentRequests.find(req => 
+                    req.studentId === userId && 
+                    req.courseId === courseId
+                );
+
+                if (userRequest) {
+                    // Update UI based on request status
+                    updateEnrollmentUI(courseId);
+                    
+                    // If request was approved and notification hasn't been shown yet
+                    if (userRequest.status === 'approved' && !hasShownApprovalNotification) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Enrollment Approved',
+                            text: 'Your enrollment request has been approved. You can now access the course materials.',
+                            confirmButtonText: 'View Materials'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                viewMaterials();
+                            }
+                            // Mark that we've shown the notification
+                            hasShownApprovalNotification = true;
+                            localStorage.setItem(approvalNotificationKey, 'true');
+                        });
+                    }
+                }
+            }
+
+            // Check status immediately
+            checkEnrollmentStatus();
+
+            // Set up interval to check status
+            const statusCheckInterval = setInterval(checkEnrollmentStatus, 5000);
+
+            // Clean up interval when page is unloaded
+            window.addEventListener('unload', () => {
+                clearInterval(statusCheckInterval);
+            });
+        }
+
+        function showNotification(notification) {
+                            Swal.fire({
+                                icon: 'success',
+                title: notification.title,
+                text: notification.message,
+                                timer: 5000,
+                                timerProgressBar: true,
+                                showConfirmButton: true,
+                                confirmButtonText: 'View Course'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                    loadCourseContent(notification.metadata.courseId);
+                }
+            });
+        }
+
+        function checkEnrollmentStatus() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return null;
+
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const course = courses.find(c => c.id === currentCourseId);
+            if (!course) return null;
+
+            // Check if user is enrolled in the course
+            if (course.enrolledStudents && course.enrolledStudents.includes(currentUser.id)) {
+                return 'approved';
+            }
+
+            // Check for pending or rejected requests
+            const requests = JSON.parse(localStorage.getItem('enrollmentRequests')) || [];
+            const userRequest = requests.find(r => 
+                r.studentId === currentUser.id && 
+                r.courseId === currentCourseId
+            );
+
+            return userRequest ? userRequest.status : null;
+        }
+
+        function updateUIForEnrollmentStatus(status) {
+            const enrollBtn = document.getElementById('enroll-button');
+            const viewMaterialsBtn = document.getElementById('view-materials-button');
+            const courseContent = document.getElementById('course-content');
+            const enrollmentStatus = document.getElementById('enrollment-notification');
+
+            if (status === 'approved') {
+                enrollBtn.style.display = 'none';
+                viewMaterialsBtn.style.display = 'block';
+                courseContent.style.display = 'block';
+                if (enrollmentStatus) enrollmentStatus.style.display = 'none';
+            } else if (status === 'pending') {
+                enrollBtn.style.display = 'none';
+                viewMaterialsBtn.style.display = 'none';
+                courseContent.style.display = 'none';
+                if (enrollmentStatus) {
+                    enrollmentStatus.textContent = 'Enrollment Request Pending';
+                    enrollmentStatus.style.display = 'block';
+                }
+            } else if (status === 'rejected') {
+                enrollBtn.style.display = 'block';
+                viewMaterialsBtn.style.display = 'none';
+                courseContent.style.display = 'none';
+                if (enrollmentStatus) {
+                    enrollmentStatus.textContent = 'Enrollment Request Rejected';
+                    enrollmentStatus.style.display = 'block';
+                }
+            } else {
+                enrollBtn.style.display = 'block';
+                viewMaterialsBtn.style.display = 'none';
+                courseContent.style.display = 'none';
+                if (enrollmentStatus) enrollmentStatus.style.display = 'none';
+            }
+        }
+
+        // Monitor enrollment status changes
+        function monitorEnrollmentStatus() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            setInterval(() => {
+                const statusChange = JSON.parse(localStorage.getItem('enrollmentStatusChanged'));
+                if (statusChange && 
+                    statusChange.studentId === currentUser.id && 
+                    statusChange.courseId === currentCourseId) {
+                    
+                    const status = checkEnrollmentStatus();
+                    updateUIForEnrollmentStatus(status);
+                    
+                    if (status === 'approved') {
+                        showNotification('Your enrollment request has been approved! You now have access to the course materials.', 'success');
+                    } else if (status === 'rejected') {
+                        showNotification('Your enrollment request has been rejected.', 'error');
+                    }
+                    
+                    // Clear the status change flag
+                    localStorage.removeItem('enrollmentStatusChanged');
+                }
+            }, 1000);
+        }
+
+        // Initialize enrollment status check and monitoring
+        document.addEventListener('DOMContentLoaded', () => {
+            const status = checkEnrollmentStatus();
+            updateUIForEnrollmentStatus(status);
+            monitorEnrollmentStatus();
+        });
+
+        function checkMaterialData(material) {
+            console.log('Checking material data:', material);
+            const fileData = material.fileData || material.data || material.content;
+            if (!fileData) {
+                console.warn('Material missing file data:', material);
+                // Try to recover file data from localStorage
+                const storedMaterials = JSON.parse(localStorage.getItem('courseMaterials') || '[]');
+                const storedMaterial = storedMaterials.find(m => m.id === material.id);
+                if (storedMaterial && (storedMaterial.fileData || storedMaterial.data || storedMaterial.content)) {
+                    material.fileData = storedMaterial.fileData || storedMaterial.data || storedMaterial.content;
+                    console.log('Recovered file data from storage');
+                    
+                    // Update the course materials in localStorage
+                    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+                    const courseIndex = courses.findIndex(c => c.id === material.courseId);
+                    if (courseIndex !== -1) {
+                        const materialIndex = courses[courseIndex].materials.findIndex(m => m.id === material.id);
+                        if (materialIndex !== -1) {
+                            courses[courseIndex].materials[materialIndex] = material;
+                            localStorage.setItem('courses', JSON.stringify(courses));
+                            console.log('Updated course materials with recovered file data');
+                        }
+                    }
+                }
+            }
+            return material;
+        }
+
+        function getMaterialDataStatus(material) {
+            const fileData = material.fileData || material.data || material.content;
+            if (!fileData) {
+                return {
+                    class: 'status-error',
+                    icon: 'fa-exclamation-circle',
+                    text: 'File data missing'
+                };
+            }
+            
+            try {
+                // Try to validate the file data
+                if (fileData instanceof Blob) {
+                    return {
+                        class: 'status-success',
+                        icon: 'fa-check-circle',
+                        text: 'File data ready'
+                    };
+                }
+                
+                // Check if it's valid base64
+                const base64Data = fileData.split(',')[1] || fileData;
+                atob(base64Data); // This will throw if invalid base64
+                
+                return {
+                    class: 'status-success',
+                    icon: 'fa-check-circle',
+                    text: 'File data ready'
+                };
+            } catch (e) {
+                console.error('Invalid file data:', e);
+                return {
+                    class: 'status-error',
+                    icon: 'fa-exclamation-circle',
+                    text: 'Invalid file data'
+                };
+            }
+        }
+
+        function showMaterialDataStatus(materialId, courseId, source) {
+            let material;
+            
+            if (source === 'course') {
+                const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+                const course = courses.find(c => c.id === courseId);
+                material = course?.materials?.find(m => m.id === materialId);
+            } else {
+                const storedMaterials = JSON.parse(localStorage.getItem('courseMaterials') || '[]');
+                material = storedMaterials.find(m => m.id === materialId && m.courseId === courseId);
+            }
+            
+            if (!material) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Material Not Found',
+                    text: 'The material could not be found in the system.'
+                });
+                return;
+            }
+            
+            const status = getMaterialDataStatus(material);
+            const fileData = material.fileData || material.data || material.content;
+            
+            Swal.fire({
+                icon: status.class === 'status-success' ? 'success' : 'error',
+                title: 'Material Data Status',
+                html: `
+                    <div class="material-status-details">
+                        <p><strong>Title:</strong> ${material.title || material.name}</p>
+                        <p><strong>Status:</strong> <span class="${status.class}">${status.text}</span></p>
+                        <p><strong>File Data:</strong> ${fileData ? 'Present' : 'Missing'}</p>
+                        <p><strong>Data Type:</strong> ${fileData ? (fileData instanceof Blob ? 'Blob' : 'Base64') : 'N/A'}</p>
+                        ${fileData ? `<p><strong>Data Size:</strong> ${formatFileSize(fileData.length)}</p>` : ''}
+                    </div>
+                `,
+                confirmButtonText: 'OK'
+            });
+        }
+    </script>
+</body>
+</html> 

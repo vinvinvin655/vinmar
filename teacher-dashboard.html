@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - CiviLearn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Materials Section Styles */
+        .materials-section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .materials-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .material-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        
+        .material-item:last-child {
+            border-bottom: none;
+        }
+        
+        .material-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .material-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(74, 107, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .material-info {
+            flex: 1;
+        }
+        
+        .material-info h5 {
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .material-info p {
+            margin: 0 0 5px 0;
+            font-size: 0.85rem;
+        }
+        
+        .material-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+        
+        .material-meta span {
+            display: flex;
+            align-items: center;
+        }
+        
+        .material-meta i {
+            margin-right: 5px;
+        }
+        
+        .material-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* File Upload Styles */
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        
+        .file-upload i {
+            color: var(--primary-color);
+        }
+        
+        .file-upload p {
+            margin: 0;
+            color: #6c757d;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 80%;
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        /* Button Styles */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bef;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.875rem;
+        }
+        
+        /* Form Styles */
+        .form-control, .form-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .my-4 {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Status Badge Styles */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-published {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-draft {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--secondary-color);
+        }
+        
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .menu-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .menu-item.active {
+            background-color: rgba(74, 107, 255, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .menu-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .stats-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .stats-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .stats-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .text-muted {
+            color: #6c757d;
+        }
+        
+        .gap-3 {
+            gap: 1rem;
+        }
+        
+        .d-flex {
+            display: flex;
+        }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+        
+        .col-md-3 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        
+        .student-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .stat-item {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .enrolled-course-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .enrolled-course-item i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>CiviLearn</h3>
+            <p>Teacher Dashboard</p>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item active" id="dashboard-btn">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" id="create-course-btn">
+                <i class="fas fa-plus-circle"></i>
+                <span>Create Course</span>
+            </div>
+            <div class="menu-item" id="my-courses-btn">
+                <i class="fas fa-book"></i>
+                <span>My Courses</span>
+            </div>
+            <div class="menu-item" id="enrollment-requests-btn">
+                <i class="fas fa-user-plus"></i>
+                <span>Enrollment Requests</span>
+            </div>
+            <div class="menu-item" id="students-btn">
+                <i class="fas fa-users"></i>
+                <span>Students</span>
+            </div>
+            <div class="menu-item" id="analytics-btn">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </div>
+            <div class="menu-item" id="settings-btn">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+            <div class="menu-item" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <div>
+                <h2>Welcome, <span id="teacher-name">Teacher</span>!</h2>
+                <p class="text-muted">Here's what's happening with your courses today.</p>
+            </div>
+            <div class="d-flex gap-3">
+                <button class="btn btn-primary" id="create-course-btn">
+                    <i class="fas fa-plus-circle me-2"></i>Create Course
+                </button>
+                <button class="btn btn-outline-primary" id="students-btn">
+                    <i class="fas fa-users me-2"></i>View Students
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon" style="background-color: rgba(74, 107, 255, 0.1); color: var(--primary-color);">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>12</h3>
+                    <p class="text-muted mb-0">Total Courses</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon" style="background-color: rgba(40, 167, 69, 0.1); color: var(--success-color);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>245</h3>
+                    <p class="text-muted mb-0">Total Students</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon" style="background-color: rgba(255, 193, 7, 0.1); color: var(--warning-color);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>8</h3>
+                    <p class="text-muted mb-0">Pending Reviews</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon" style="background-color: rgba(220, 53, 69, 0.1); color: var(--danger-color);">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h3>3</h3>
+                    <p class="text-muted mb-0">Course Issues</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Table -->
+        <div class="table-container">
+            <h4 class="mb-4">Recent Courses</h4>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Course Title</th>
+                            <th>Category</th>
+                            <th>Students</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courses-table-body">
+                        <!-- Course rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Course Modal -->
+    <div class="modal" id="create-course-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="mb-4">Create New Course</h3>
+            <form id="create-course-form">
+                <div class="mb-3">
+                    <label for="course-title" class="form-label">Course Title</label>
+                    <input type="text" class="form-control" id="course-title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="course-category" class="form-label">Category</label>
+                    <select class="form-select" id="course-category" required>
+                        <option value="">Select Category</option>
+                        <option value="Structural Engineering">Structural Engineering</option>
+                        <option value="Transportation Engineering">Transportation Engineering</option>
+                        <option value="Environmental Engineering">Environmental Engineering</option>
+                        <option value="Geotechnical Engineering">Geotechnical Engineering</option>
+                        <option value="Water Resources Engineering">Water Resources Engineering</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="course-description" class="form-label">Description</label>
+                    <textarea class="form-control" id="course-description" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="course-requires-approval">
+                        <input type="checkbox" id="course-requires-approval">
+                        Require teacher approval for enrollment
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Course Image</label>
+                    <div class="file-upload" id="course-image-upload">
+                        <input type="file" accept="image/*">
+                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                        <p class="mb-0">Click to upload course image</p>
+                    </div>
+                </div>
+                
+                <!-- Add Course Materials Section to the Create Course Form -->
+                <div class="mb-3">
+                    <label class="form-label">Course Materials</label>
+                    <div class="file-upload" id="course-materials-upload">
+                        <input type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4">
+                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                        <p class="mb-0">Click to upload course materials</p>
+                    </div>
+                    <div id="course-materials-list" class="mt-3">
+                        <!-- Uploaded files will be listed here -->
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Create Course</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div class="modal" id="edit-course-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="mb-4">Edit Course</h3>
+            <form id="edit-course-form">
+                <div class="mb-3">
+                    <label for="edit-course-title" class="form-label">Course Title</label>
+                    <input type="text" class="form-control" id="edit-course-title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="edit-course-category" class="form-label">Category</label>
+                    <select class="form-select" id="edit-course-category" required>
+                        <option value="">Select Category</option>
+                        <option value="Structural Engineering">Structural Engineering</option>
+                        <option value="Transportation Engineering">Transportation Engineering</option>
+                        <option value="Environmental Engineering">Environmental Engineering</option>
+                        <option value="Geotechnical Engineering">Geotechnical Engineering</option>
+                        <option value="Water Resources Engineering">Water Resources Engineering</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="edit-course-description" class="form-label">Description</label>
+                    <textarea class="form-control" id="edit-course-description" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="edit-course-requires-approval">
+                        <input type="checkbox" id="edit-course-requires-approval">
+                        Require teacher approval for enrollment
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Course Materials</label>
+                    <div class="file-upload" id="edit-course-materials-upload">
+                        <input type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx">
+                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                        <p class="mb-0">Click to upload course materials</p>
+                    </div>
+                    <div id="edit-course-materials-list" class="mt-3">
+                        <!-- Uploaded files will be listed here -->
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Course Video</label>
+                    <div class="file-upload" id="edit-course-video-upload">
+                        <input type="file" accept="video/*">
+                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                        <p class="mb-0">Click to upload course video</p>
+                    </div>
+                    <div id="edit-course-video-preview" class="mt-3">
+                        <!-- Video preview will be shown here -->
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Course</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Students Modal -->
+    <div class="modal" id="students-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="mb-4">Students</h3>
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="student-search" placeholder="Search students...">
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" id="course-filter">
+                            <option value="">All Courses</option>
+                            <!-- Course options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Enrolled Courses</th>
+                            <th>Progress</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body">
+                        <!-- Student rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div class="modal" id="student-details-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="text-center">
+                <img id="student-avatar" src="" alt="Student Avatar" class="student-avatar">
+                <h3 id="student-name" class="mb-1"></h3>
+                <p id="student-email" class="text-muted"></p>
+            </div>
+            <div class="student-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="student-courses-count">0</div>
+                    <div class="stat-label">Enrolled Courses</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="student-completion">0%</div>
+                    <div class="stat-label">Overall Completion</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="student-last-active">-</div>
+                    <div class="stat-label">Last Active</div>
+                </div>
+            </div>
+            <h4 class="mb-3">Enrolled Courses</h4>
+            <div id="enrolled-courses-list">
+                <!-- Enrolled courses will be listed here -->
+            </div>
+            <div class="mt-4">
+                <button class="btn btn-primary" onclick="sendMessage(document.getElementById('send-message-form').dataset.studentId)">
+                    <i class="fas fa-envelope me-2"></i>Send Message
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Message Modal -->
+    <div class="modal" id="send-message-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="mb-4">Send Message</h3>
+            <form id="send-message-form">
+                <div class="mb-3">
+                    <label for="message-subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" id="message-subject" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message-content" class="form-label">Message</label>
+                    <textarea class="form-control" id="message-content" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enrollment Requests Modal -->
+    <div id="enrollment-requests-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Enrollment Requests</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="filters">
+                    <input type="text" id="enrollment-search" placeholder="Search by student name or email..." class="form-control">
+                    <select id="enrollment-course-filter" class="form-control">
+                        <option value="">All Courses</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Course</th>
+                                <th>Request Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enrollment-requests-table-body">
+                            <!-- Enrollment requests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+    <script src="teacher-dashboard.js"></script>
+    <script src="course-materials.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication state
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+            const sessionExpiration = localStorage.getItem('sessionExpiration');
+            
+            if (isLoggedIn) {
+                // Check if session has expired
+                if (sessionExpiration && new Date(sessionExpiration) < new Date()) {
+                    // Session expired, clear storage
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // User is signed in
+                document.querySelector('.auth-buttons').style.display = 'none';
+                document.querySelector('.profile-section').style.display = 'flex';
+                
+                // Get user data from localStorage or sessionStorage
+                const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+                const userFullName = localStorage.getItem('userFullName') || sessionStorage.getItem('userFullName');
+                const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+                
+                // Update profile info
+                document.querySelector('.user-fullname').textContent = userFullName || 'User';
+                
+                // Update profile icon if available
+                const storageKey = `userProfileImage_${userEmail}`;
+                const userProfileImage = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey);
+                
+                if (userProfileImage) {
+                    updateProfileIcon(userProfileImage);
+                }
+                
+                // Setup logout button
+                setupLogoutButton();
+                
+                // Setup notifications
+                setupNotifications(userId);
+                
+                // Setup enrollment request check
+                setupEnrollmentRequestCheck();
+                
+                // Setup enrollment request updates
+                setupEnrollmentRequestUpdates();
+                
+                // Load enrollment requests
+                loadEnrollmentRequests();
+                
+                // Setup enrollment request handlers
+                setupEnrollmentRequestHandlers();
+            } else {
+                // User is signed out
+                document.querySelector('.auth-buttons').style.display = 'flex';
+                document.querySelector('.profile-section').style.display = 'none';
+            }
+            
+            // Load courses
+            loadCourses();
+            
+            // Add event listener for page visibility changes
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    refreshProfileInfo();
+                    loadCourses(); // Reload courses when page becomes visible
+                    loadEnrollmentRequests(); // Reload enrollment requests when page becomes visible
+                }
+            });
+            
+            // Add event listener for when user returns to the page
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    refreshProfileInfo();
+                    loadCourses(); // Reload courses when page is shown from cache
+                    loadEnrollmentRequests(); // Reload enrollment requests when page is shown from cache
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

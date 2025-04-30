@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivilEdu - Civil Engineering Learning Platform</title>
+    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        /* Notification Styles */
+        .notification-badge {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            display: none;
+        }
+        
+        .notifications-btn {
+            position: relative;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: #dc3545;
+        }
+        
+        .modal h3 {
+            margin: 0 0 1.5rem 0;
+            color: #333;
+            font-size: 1.5rem;
+        }
+        
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: background-color 0.3s ease;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .notification-item.unread {
+            background-color: rgba(74, 107, 255, 0.05);
+        }
+        
+        .notification-content {
+            flex: 1;
+            padding-right: 1rem;
+        }
+        
+        .notification-content h5 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .notification-content p {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .notification-content small {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        
+        .notification-actions {
+            margin-left: 1rem;
+        }
+        
+        #notifications-list {
+            max-height: calc(80vh - 100px);
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        #notifications-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #notifications-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        #notifications-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        #notifications-list::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .notification-item {
+                flex-direction: column;
+            }
+            
+            .notification-actions {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
+            }
+            
+            .notification-actions button {
+                width: 100%;
+            }
+        }
+        
+        /* Existing styles */
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        /* Course Card Styles */
+        .course-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .course-card h3 {
+            padding: 1.2rem 1.5rem 0.8rem;
+            margin: 0;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .course-card p {
+            padding: 0 1.5rem;
+            margin: 0;
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .course-meta {
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .course-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .course-meta i {
+            color: #4a6bff;
+        }
+
+        .course-buttons {
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+        }
+
+        .view-course-btn {
+            background: #4a6bff;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .view-course-btn:hover {
+            background: #3a5bef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 107, 255, 0.2);
+        }
+
+        .view-course-btn:active {
+            transform: translateY(0);
+        }
+
+        .view-course-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Course Grid Layout */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .course-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+                padding: 1rem;
+            }
+        }
+
+        /* Subscription Banner Styles */
+        .subscription-banner {
+            background: linear-gradient(135deg, #4a6bff 0%, #2541b2 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .banner-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .banner-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .banner-text p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .banner-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .banner-features li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .banner-features i {
+            color: #4CAF50;
+        }
+
+        .banner-cta {
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .banner-price {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .banner-button {
+            background: white;
+            color: #4a6bff;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .banner-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .banner-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .banner-features li {
+                justify-content: center;
+            }
+
+            .banner-cta {
+                width: 100%;
+            }
+        }
+
+        /* Subscription Modal Styles */
+        .subscription-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 12px;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4a6bff 0%, #2541b2 100%);
+            padding: 2rem;
+            color: white;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header-content {
+            flex: 1;
+            padding-right: 2rem;
+        }
+
+        .modal-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .modal-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            color: #4a6bff;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .modal-pricing {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .price-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .price-card.popular {
+            border: 2px solid #4a6bff;
+            transform: scale(1.05);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4a6bff;
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            font-size: 2rem;
+            color: #4a6bff;
+            font-weight: bold;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .plan-features i {
+            color: #4CAF50;
+        }
+
+        .subscribe-btn {
+            background: #4a6bff;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .subscribe-btn:hover {
+            background: #2541b2;
+            transform: translateY(-2px);
+        }
+
+        .subscribe-btn.primary {
+            background: #2541b2;
+        }
+
+        .subscribe-btn.primary:hover {
+            background: #1a2f7a;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-pricing {
+                grid-template-columns: 1fr;
+            }
+
+            .price-card.popular {
+                transform: none;
+            }
+
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-content {
+                padding-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .close-modal {
+                position: relative;
+                margin: 0 auto;
+                right: 0;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>CiviLearn</h1>
+        </div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#courses">Courses</a>
+            <a href="#ebooks">Resources</a>
+            <a href="forum.html">Forum</a>
+            <a href="study-space.html">Study Space</a>
+          
+        </div>
+        <div class="auth-buttons">
+            <a href="login.html" class="login-btn">Login</a>
+            <a href="signup.html" class="signup-btn">Sign Up</a>
+        </div>
+        <div class="profile-section" style="display: none;">
+            <div class="profile-dropdown">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <span class="user-fullname"></span>
+                </div>
+                <div class="dropdown-content">
+                    <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="#" class="dropdown-item notifications-btn"><i class="fas fa-bell"></i> Notifications <span class="notification-badge" id="notification-count">0</span></a>
+                    <a href="#" class="dropdown-item logout-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notifications Modal -->
+    <div class="modal" id="notifications-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeNotificationsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3>Notifications</h3>
+            <div id="notifications-list">
+                <!-- Notifications will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Learn Civil Engineering Online</h1>
+            <p>Access free resources, courses, and connect with fellow engineering students</p>
+            <button class="cta-button">Get Started</button>
+        </div>
+    </section>
+
+    <!-- Subscription Modal -->
+    <div class="subscription-modal" id="subscription-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-content">
+                    <h2>Unlock Full Access to All Courses</h2>
+                    <p>Subscribe now and get unlimited access to premium courses, materials, and features!</p>
+                </div>
+                <button class="close-modal" onclick="hideSubscriptionModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-features">
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h4>Premium Courses</h4>
+                            <p>Access to all advanced courses</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-download"></i>
+                            <h4>Download Materials</h4>
+                            <p>Offline access to all resources</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-headset"></i>
+                            <h4>Priority Support</h4>
+                            <p>24/7 dedicated assistance</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-certificate"></i>
+                            <h4>Certification</h4>
+                            <p>Official certificates upon completion</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-pricing">
+                    <div class="price-card">
+                        <div class="card-header">
+                            <h3>Basic</h3>
+                            <div class="price">$9.99<span>/month</span></div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> Access to basic courses</li>
+                            <li><i class="fas fa-check"></i> Limited resources</li>
+                            <li><i class="fas fa-check"></i> Community support</li>
+                        </ul>
+                        <button class="subscribe-btn" onclick="window.location.href='subscription.html'">Get Started</button>
+                    </div>
+                    <div class="price-card popular">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="card-header">
+                            <h3>Pro</h3>
+                            <div class="price">$19.99<span>/month</span></div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> All Basic features</li>
+                            <li><i class="fas fa-check"></i> Unlimited resources</li>
+                            <li><i class="fas fa-check"></i> Priority support</li>
+                            <li><i class="fas fa-check"></i> Downloadable content</li>
+                        </ul>
+                        <button class="subscribe-btn primary" onclick="window.location.href='subscription.html'">Get Started</button>
+                    </div>
+                    <div class="price-card">
+                        <div class="card-header">
+                            <h3>Premium</h3>
+                            <div class="price">$29.99<span>/month</span></div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> All Pro features</li>
+                            <li><i class="fas fa-check"></i> 1-on-1 mentoring</li>
+                            <li><i class="fas fa-check"></i> Advanced certificates</li>
+                            <li><i class="fas fa-check"></i> Offline access</li>
+                        </ul>
+                        <button class="subscribe-btn" onclick="window.location.href='subscription.html'">Get Started</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature-card">
+            <i class="fas fa-graduation-cap"></i>
+            <h3>In Demand Topics</h3>
+            <p>Explore high-impact Civil Engineering courses designed to equip you with in-demand skills</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-book"></i>
+            <h3>Free Civil Engineering Resources</h3>
+            <p>Comprehensive study materials and practice questions</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-users"></i>
+            <h3>Community Forum</h3>
+            <p>Connect and discuss with fellow engineering students</p>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses" id="courses">
+        <h2>Available Courses</h2>
+        <div class="course-grid" id="course-grid">
+            <!-- Courses will be loaded dynamically -->
+        </div>
+    </section>
+
+    <!-- Study Space Section -->
+    <section class="study-space" id="study-space">
+        <h2>Interactive Study Space</h2>
+        <div class="study-tools">
+            <div class="tool-card">
+                <i class="fas fa-calculator"></i>
+                <h3>Engineering Calculator</h3>
+                <p>Access specialized calculators for engineering problems</p>
+            </div>
+            <div class="tool-card">
+                <i class="fas fa-tasks"></i>
+                <h3>Practice Problems</h3>
+                <p>Test your knowledge with interactive problems</p>
+            </div>
+            <div class="tool-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Progress Tracking</h3>
+                <p>Monitor your learning progress</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forum Section -->
+    <section class="forum" id="forum">
+        <h2>Student Forum</h2>
+        <div class="forum-container">
+            <div class="forum-topics">
+                <h3>Popular Topics</h3>
+                <ul>
+                    <li>Structural Analysis</li>
+                    <li>Transportation Planning</li>
+                    <li>Environmental Impact</li>
+                    <li>Construction Management</li>
+                </ul>
+            </div>
+            <div class="forum-posts">
+                <div class="post">
+                    <h4>Help with Beam Analysis</h4>
+                    <p>Looking for guidance on analyzing simply supported beams...</p>
+                    <span class="post-meta">Posted by: JohnDoe • 2 hours ago</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- E-Books Section -->
+    <section class="ebooks" id="ebooks">
+        <h2>Free E-Books</h2>
+        <div class="ebook-grid">
+            <div class="ebook-card">
+                <img src="https://via.placeholder.com/200x300" alt="E-Book Cover">
+                <h3>Structural Analysis Fundamentals</h3>
+                <button class="download-btn">Download</button>
+            </div>
+            <div class="ebook-card">
+                <img src="https://via.placeholder.com/200x300" alt="E-Book Cover">
+                <h3>Transportation Engineering Guide</h3>
+                <button class="download-btn">Download</button>
+            </div>
+            <div class="ebook-card">
+                <img src="https://via.placeholder.com/200x300" alt="E-Book Cover">
+                <h3>Environmental Engineering Basics</h3>
+                <button class="download-btn">Download</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About CivilEdu</h3>
+                <p>Your trusted platform for civil engineering education</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#courses">Courses</a></li>
+                    <li><a href="#resources">Resources</a></li>
+                    <li><a href="#forum">Forum</a></li>
+                    <li><a href="#study-space">Study Space</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        
+    </footer>
+    
+
+    <script src="script.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Auth JS - Include this before your other scripts -->
+    <script src="auth.js"></script>
+    <script>
+        // Define a local showNotification function in case auth.js is not properly loaded
+        if (typeof showNotification !== 'function') {
+            function showNotification(message, type = 'success') {
+                // Check if the message is related to enrollment
+                const isEnrollmentNotification = message.includes('enrollment request');
+                
+                // Use different settings for enrollment notifications
+                if (isEnrollmentNotification) {
+                    // For enrollment notifications, use a more prominent modal instead of a toast
+                    Swal.fire({
+                        title: message.includes('approved') ? 'Enrollment Request Approved!' : 'Enrollment Request Rejected',
+                        text: message,
+                        icon: type,
+                        confirmButtonText: 'View Course',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: true,
+                        showCloseButton: false,
+                        timer: 10000, // Longer display time
+                        timerProgressBar: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // If it's an approval notification, redirect to courses page
+                            if (type === 'success' && message.includes('approved')) {
+                                window.location.href = 'index.html#courses';
+                            }
+                        }
+                    });
+                } else {
+                    // Regular notification
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+
+                    Toast.fire({
+                        icon: type,
+                        title: message,
+                        background: type === 'success' ? '#4CAF50' : '#f44336',
+                        color: '#fff',
+                        iconColor: '#fff',
+                        customClass: {
+                            popup: 'animated fadeInDown'
+                        }
+                    });
+                }
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication state
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+            const sessionExpiration = localStorage.getItem('sessionExpiration');
+            
+            if (isLoggedIn) {
+                // Check if session has expired
+                if (sessionExpiration && new Date(sessionExpiration) < new Date()) {
+                    // Session expired, clear storage
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // User is signed in
+                document.querySelector('.auth-buttons').style.display = 'none';
+                document.querySelector('.profile-section').style.display = 'flex';
+                
+                // Get user data from localStorage or sessionStorage
+                const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+                const userFullName = localStorage.getItem('userFullName') || sessionStorage.getItem('userFullName');
+                const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+                
+                // Update profile info
+                document.querySelector('.user-fullname').textContent = userFullName || 'User';
+                
+                // Update profile icon if available
+                const storageKey = `userProfileImage_${userEmail}`;
+                const userProfileImage = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey);
+                
+                if (userProfileImage) {
+                    updateProfileIcon(userProfileImage);
+                }
+                
+                // Setup logout button
+                setupLogoutButton();
+                
+                // Setup notifications
+                setupNotifications(userId);
+                
+                // Setup enrollment request check
+                setupEnrollmentRequestCheck();
+                
+                // Check for new notifications immediately
+                const notificationCount = document.getElementById('notification-count');
+                if (notificationCount) {
+                    loadNotifications(userId, notificationCount);
+                }
+                
+                // Set up periodic check for enrollment status changes
+                setInterval(checkEnrollmentStatusChanges, 10000); // Check every 10 seconds
+            } else {
+                // User is signed out
+                document.querySelector('.auth-buttons').style.display = 'flex';
+                document.querySelector('.profile-section').style.display = 'none';
+            }
+            
+            // Load courses
+            loadCourses();
+            
+            // Add event listener for page visibility changes
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    refreshProfileInfo();
+                    loadCourses(); // Reload courses when page becomes visible
+                }
+            });
+            
+            // Add event listener for when user returns to the page
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    refreshProfileInfo();
+                    loadCourses(); // Reload courses when page is shown from cache
+                }
+            });
+        });
+        
+        // Function to setup notifications
+        function setupNotifications(userId) {
+            // Get notifications button
+            const notificationsBtn = document.querySelector('.notifications-btn');
+            
+            // Get notifications modal
+            const notificationsModal = document.getElementById('notifications-modal');
+            
+            // Get notification count badge
+            const notificationCount = document.getElementById('notification-count');
+            
+            // Load notifications
+            loadNotifications(userId, notificationCount);
+            
+            // Open notifications modal
+            if (notificationsBtn && notificationsModal) {
+                notificationsBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showNotificationsModal();
+                    loadNotificationsList(userId);
+                });
+            }
+            
+            // Close modal when clicking on close button
+            const closeModalBtn = notificationsModal.querySelector('.close-modal');
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', () => {
+                    closeNotificationsModal();
+                });
+            }
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === notificationsModal) {
+                    closeNotificationsModal();
+                }
+            });
+        }
+        
+        // Function to load notifications
+        function loadNotifications(userId, notificationCount) {
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const userNotifications = notifications.filter(notification => 
+                notification.userId === userId && !notification.read
+            );
+            
+            // Update notification count
+            notificationCount.textContent = userNotifications.length;
+            
+            // Show notification count badge if there are unread notifications
+            if (userNotifications.length > 0) {
+                notificationCount.style.display = 'inline';
+                
+                // If there are new notifications, show a toast
+                const newNotificationCreated = localStorage.getItem('newNotificationCreated') === 'true';
+                const newNotificationUserId = localStorage.getItem('newNotificationUserId');
+                
+                if (newNotificationCreated && newNotificationUserId === userId) {
+                    // Get the latest notification
+                    const latestNotification = userNotifications.sort((a, b) => 
+                        new Date(b.createdAt) - new Date(a.createdAt)
+                    )[0];
+                    
+                    if (latestNotification) {
+                        // Show notification using SweetAlert
+                        showNotification(latestNotification.message, 
+                            latestNotification.title.includes('Approved') ? 'success' : 'error');
+                        
+                        // Clear the flag
+                        localStorage.removeItem('newNotificationCreated');
+                        localStorage.removeItem('newNotificationUserId');
+                    }
+                }
+            } else {
+                notificationCount.style.display = 'none';
+            }
+        }
+        
+        // Function to load notifications list
+        function loadNotificationsList(userId) {
+            const notificationsList = document.getElementById('notifications-list');
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const userNotifications = notifications.filter(notification => 
+                notification.userId === userId
+            ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            if (userNotifications.length === 0) {
+                notificationsList.innerHTML = '<p class="text-center">No notifications</p>';
+                return;
+            }
+            
+            notificationsList.innerHTML = userNotifications.map(notification => `
+                <div class="notification-item ${notification.read ? 'read' : 'unread'}" data-id="${notification.id}">
+                    <div class="notification-content">
+                        <h5>${notification.title}</h5>
+                        <p>${notification.message}</p>
+                        <small>${new Date(notification.createdAt).toLocaleString()}</small>
+                    </div>
+                    ${notification.courseId ? `
+                        <div class="notification-actions">
+                            <button class="btn btn-sm btn-primary view-course-btn" data-course-id="${notification.courseId}">
+                                View Course
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            
+            // Mark notifications as read
+            userNotifications.forEach(notification => {
+                if (!notification.read) {
+                    const notificationIndex = notifications.findIndex(n => n.id === notification.id);
+                    if (notificationIndex !== -1) {
+                        notifications[notificationIndex].read = true;
+                    }
+                }
+            });
+            
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+            
+            // Update notification count
+            document.getElementById('notification-count').textContent = '0';
+            document.getElementById('notification-count').style.display = 'none';
+            
+            // Add event listeners to view course buttons
+            const viewCourseButtons = document.querySelectorAll('.view-course-btn');
+            viewCourseButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const courseId = button.getAttribute('data-course-id');
+                    window.location.href = `course-details.html?id=${courseId}`;
+                });
+            });
+        }
+        
+        // Function to load courses from localStorage
+        function loadCourses() {
+            const courseGrid = document.getElementById('course-grid');
+            const courses = JSON.parse(localStorage.getItem('courses') || '[]');
+            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+            const enrollmentRequests = JSON.parse(localStorage.getItem('enrollmentRequests') || '[]');
+            
+            // Get user's enrollment requests
+            const userRequests = enrollmentRequests.filter(request => request.studentId === userId);
+            
+            if (courses.length === 0) {
+                courseGrid.innerHTML = `
+                    <div class="no-courses">
+                        <p>No courses available at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            courseGrid.innerHTML = courses.map(course => {
+                // Check if student has an approved enrollment request
+                const hasApprovedRequest = userRequests.some(request => 
+                    request.courseId === course.id && 
+                    request.status === 'approved'
+                );
+                
+                // Check if student is already enrolled
+                const isEnrolled = course.enrolledStudents && course.enrolledStudents.includes(userId);
+                
+                return `
+                    <div class="course-card">
+                        <img src="${course.image || 'Image/default-course.jpg'}" alt="${course.title}">
+                        <h3>${course.title}</h3>
+                        <p>${course.description || 'No description available'}</p>
+                        <div class="course-meta">
+                            <span><i class="fas fa-book"></i> ${course.category}</span>
+                            <span><i class="fas fa-user"></i> ${course.students || 0} students</span>
+                        </div>
+                        <div class="course-buttons">
+                            <button class="view-course-btn" onclick="window.location.href='course-details.html?id=${course.id}'">
+                                <i class="fas fa-external-link-alt"></i>
+                                View Course
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Function to refresh profile information
+        function refreshProfileInfo() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                // Get user data from localStorage or sessionStorage
+                const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+                const userFullName = localStorage.getItem('userFullName') || sessionStorage.getItem('userFullName');
+                
+                // Update profile info
+                document.querySelector('.user-fullname').textContent = userFullName || 'User';
+                
+                // Update profile icon if available
+                const storageKey = `userProfileImage_${userEmail}`;
+                const userProfileImage = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey);
+                
+                if (userProfileImage) {
+                    updateProfileIcon(userProfileImage);
+                }
+            } else {
+                // If not logged in, show auth buttons and hide profile section
+                document.querySelector('.auth-buttons').style.display = 'flex';
+                document.querySelector('.profile-section').style.display = 'none';
+            }
+        }
+        
+        // Update profile icon with custom image
+        function updateProfileIcon(imageUrl) {
+            const profileIcon = document.querySelector('.profile-icon');
+            
+            // Clear existing content
+            profileIcon.innerHTML = '';
+            
+            // Create and append image element
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = 'Profile Image';
+            
+            // Add specific styling for the profile icon image
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '50%';
+            
+            // Handle image load error
+            img.onerror = function() {
+                // If image fails to load, revert to default icon
+                profileIcon.innerHTML = '<i class="fas fa-user-circle"></i>';
+            };
+            
+            profileIcon.appendChild(img);
+        }
+        
+        // Setup logout button
+        function setupLogoutButton() {
+            const logoutBtn = document.querySelector('.logout-btn');
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Show confirmation dialog
+                Swal.fire({
+                    title: 'Sign Out',
+                    text: 'Are you sure you want to sign out?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, sign out',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Clear session storage
+                        sessionStorage.clear();
+                        
+                        // Clear localStorage if not using remember me
+                        if (localStorage.getItem('rememberMe') !== 'true') {
+                            localStorage.clear();
+                        } else {
+                            // Keep only remember me related data
+                            const rememberMe = localStorage.getItem('rememberMe');
+                            const isLoggedIn = localStorage.getItem('isLoggedIn');
+                            const userEmail = localStorage.getItem('userEmail');
+                            const userFullName = localStorage.getItem('userFullName');
+                            const sessionExpiration = localStorage.getItem('sessionExpiration');
+                            
+                            localStorage.clear();
+                            
+                            localStorage.setItem('rememberMe', rememberMe);
+                            localStorage.setItem('isLoggedIn', isLoggedIn);
+                            localStorage.setItem('userEmail', userEmail);
+                            localStorage.setItem('userFullName', userFullName);
+                            localStorage.setItem('sessionExpiration', sessionExpiration);
+                        }
+                        
+                        // Show success notification
+                        showNotification('Signed out successfully!', 'success');
+                        
+                        // Redirect to login page
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    }
+                });
+            });
+        }
+        
+        // Function to check for enrollment request updates
+        function setupEnrollmentRequestCheck() {
+            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+            if (!userId) return;
+
+            // Get all enrollment requests for this user (not just pending ones)
+            const allUserRequests = JSON.parse(localStorage.getItem('enrollmentRequests') || '[]')
+                .filter(request => request.studentId === userId);
+            
+            // Get initial state of pending enrollment requests
+            const initialRequests = allUserRequests.filter(request => request.status === 'pending');
+            
+            // Store initial state
+            localStorage.setItem('initialEnrollmentRequests', JSON.stringify(initialRequests));
+
+            // Check every 5 seconds for updates
+            setInterval(() => {
+                // Check for specific request approvals/rejections
+                initialRequests.forEach(request => {
+                    const wasApproved = localStorage.getItem(`request_${request.id}_approved`);
+                    const wasRejected = localStorage.getItem(`request_${request.id}_rejected`);
+                    
+                    if (wasApproved) {
+                        // Clear the flag
+                        localStorage.removeItem(`request_${request.id}_approved`);
+                        
+                        // Show approval notification
+                        showNotification({
+                            title: 'Enrollment Request Approved',
+                            message: `Your enrollment request for "${request.courseTitle}" has been approved!`,
+                            type: 'success',
+                            courseId: request.courseId
+                        });
+                        
+                        // Update notification count
+                        updateNotificationCount();
+                        
+                        // Reload courses to update UI
+                        loadCourses();
+                    }
+                    
+                    if (wasRejected) {
+                        // Clear the flag
+                        localStorage.removeItem(`request_${request.id}_rejected`);
+                        
+                        // Show rejection notification
+                        showNotification({
+                            title: 'Enrollment Request Rejected',
+                            message: `Your enrollment request for "${request.courseTitle}" has been rejected.`,
+                            type: 'error',
+                            courseId: request.courseId
+                        });
+                        
+                        // Update notification count
+                        updateNotificationCount();
+                    }
+                });
+
+                // Check for new notifications
+                const newNotificationCreated = localStorage.getItem('newNotificationCreated');
+                const newNotificationUserId = localStorage.getItem('newNotificationUserId');
+                
+                if (newNotificationCreated && newNotificationUserId === userId) {
+                    // Clear the flags
+                    localStorage.removeItem('newNotificationCreated');
+                    localStorage.removeItem('newNotificationUserId');
+                    
+                    // Get the latest notification
+                    const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+                    const userNotifications = notifications
+                        .filter(n => n.userId === userId && !n.read)
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    
+                    if (userNotifications.length > 0) {
+                        const latestNotification = userNotifications[0];
+                        showNotification({
+                            title: latestNotification.title,
+                            message: latestNotification.message,
+                            type: latestNotification.title.includes('Approved') ? 'success' : 'error',
+                            courseId: latestNotification.courseId
+                        });
+                    }
+                    
+                    // Update notification count
+                    updateNotificationCount();
+                    
+                    // Reload courses to update UI
+                    loadCourses();
+                }
+            }, 5000);
+            
+            // Also check immediately for any approved requests that might have been missed
+            const approvedRequests = allUserRequests.filter(request => request.status === 'approved');
+                    if (approvedRequests.length > 0) {
+                // Check if we need to show notifications for these
+                const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+                const userNotifications = notifications.filter(n => n.userId === userId && !n.read);
+                
+                if (userNotifications.length === 0) {
+                    // No notifications yet, create them for approved requests
+                        approvedRequests.forEach(request => {
+                        // Check if notification already exists
+                        const notificationExists = notifications.some(n => 
+                            n.userId === userId && 
+                            n.courseId === request.courseId && 
+                            n.title.includes('Approved')
+                        );
+                        
+                        if (!notificationExists) {
+                            // Create notification
+                            const newNotification = {
+                                id: 'notification_' + Date.now(),
+                                userId: userId,
+                                title: 'Enrollment Request Approved',
+                                message: `Your enrollment request for "${request.courseTitle}" has been approved!`,
+                                courseId: request.courseId,
+                                read: false,
+                                createdAt: new Date().toISOString()
+                            };
+                            
+                            notifications.push(newNotification);
+                            localStorage.setItem('notifications', JSON.stringify(notifications));
+                            
+                            // Show notification
+                            showNotification({
+                                title: 'Enrollment Request Approved',
+                                message: `Your enrollment request for "${request.courseTitle}" has been approved!`,
+                                type: 'success',
+                                courseId: request.courseId
+                            });
+                        }
+                    });
+                    
+                    // Update notification count
+                    updateNotificationCount();
+                }
+            }
+        }
+        
+        // Function to update notification count
+        function updateNotificationCount() {
+            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+            if (!userId) return;
+
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const unreadCount = notifications.filter(n => n.userId === userId && !n.read).length;
+            
+            const notificationCount = document.getElementById('notification-count');
+            if (notificationCount) {
+                if (unreadCount > 0) {
+                    notificationCount.textContent = unreadCount;
+                    notificationCount.style.display = 'inline';
+                } else {
+                    notificationCount.style.display = 'none';
+                }
+            }
+        }
+        
+        // Function to show notification
+        function showNotification({ title, message, type = 'info', courseId = null }) {
+            const isEnrollmentNotification = title.includes('Enrollment Request');
+            
+            if (isEnrollmentNotification) {
+                Swal.fire({
+                    title: title,
+                    text: message,
+                    icon: type,
+                    timer: 10000,
+                    timerProgressBar: true,
+                    showConfirmButton: true,
+                    confirmButtonText: courseId ? 'View Course' : 'OK',
+                    allowOutsideClick: false
+                            }).then((result) => {
+                    if (result.isConfirmed && courseId) {
+                        // Use consistent URL format for course details
+                        window.location.href = `course-details.html?id=${courseId}`;
+                    }
+                });
+            } else {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    }
+                });
+
+                Toast.fire({
+                    icon: type,
+                    title: title,
+                    text: message
+                        });
+                    }
+                }
+        
+        // Function to check for enrollment status changes
+        function checkEnrollmentStatusChanges() {
+            const enrollmentStatusChanged = localStorage.getItem('enrollmentStatusChanged') === 'true';
+            const lastEnrollmentUpdate = localStorage.getItem('lastEnrollmentUpdate');
+            
+            if (enrollmentStatusChanged && lastEnrollmentUpdate) {
+                const lastUpdateTime = new Date(lastEnrollmentUpdate);
+                const currentTime = new Date();
+                const timeDiff = currentTime - lastUpdateTime;
+                
+                // If the update is less than 5 minutes old, refresh the UI
+                if (timeDiff < 5 * 60 * 1000) {
+                    console.log('Enrollment status changed, refreshing UI');
+                    loadCourses();
+                    
+                    // Clear the flag after refreshing
+                    localStorage.removeItem('enrollmentStatusChanged');
+                }
+            }
+        }
+
+        // Add this to your existing script section
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show subscription modal after 5 seconds
+            setTimeout(showSubscriptionModal, 5000);
+
+            // Close modal when clicking the close button
+            const closeModal = document.querySelector('.close-modal');
+            if (closeModal) {
+                closeModal.addEventListener('click', hideSubscriptionModal);
+            }
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('subscription-modal');
+                if (event.target === modal) {
+                    hideSubscriptionModal();
+                }
+            });
+
+            // Prevent modal from showing again for 24 hours after closing
+            const modalClosedTime = localStorage.getItem('subscriptionModalClosed');
+            if (modalClosedTime) {
+                const timeSinceClosed = Date.now() - parseInt(modalClosedTime);
+                if (timeSinceClosed < 24 * 60 * 60 * 1000) { // 24 hours
+                    return;
+                }
+            }
+        });
+
+        function showSubscriptionModal() {
+            const modal = document.getElementById('subscription-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function hideSubscriptionModal() {
+            const modal = document.getElementById('subscription-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+                localStorage.setItem('subscriptionModalClosed', Date.now().toString());
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                hideSubscriptionModal();
+            }
+        });
+
+        // Add this to your existing script section
+        function showNotificationsModal() {
+            const modal = document.getElementById('notifications-modal');
+            modal.style.display = 'flex'; // Changed from 'block' to 'flex'
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeNotificationsModal() {
+            const modal = document.getElementById('notifications-modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    </script>
+</body>
+</html>

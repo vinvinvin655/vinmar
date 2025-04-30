@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CiviLearn</title>
+    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #4a6bff 0%, #2541b2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            color: #4a6bff;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .payment-requests {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .payment-requests h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .payment-table th,
+        .payment-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .payment-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: #ffc107;
+            font-weight: 500;
+        }
+
+        .status-approved {
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .status-rejected {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .approve-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .reject-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-details {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        .user-details p {
+            margin: 0.5rem 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">Admin Dashboard</h1>
+            <p>Manage subscriptions and payments</p>
+        </div>
+
+        <div class="admin-stats">
+            <div class="stat-card">
+                <h3>Total Payments</h3>
+                <p id="total-payments">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Approvals</h3>
+                <p id="pending-payments">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Approved Payments</h3>
+                <p id="approved-payments">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Revenue</h3>
+                <p id="total-revenue">₱0</p>
+            </div>
+        </div>
+
+        <div class="payment-requests">
+            <h2>Payment Requests</h2>
+            <table class="payment-table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>User</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="payment-requests-body">
+                    <!-- Payment requests will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPaymentRequests();
+            updateStats();
+            
+            // Set up real-time updates
+            setInterval(() => {
+                loadPaymentRequests();
+                updateStats();
+            }, 5000); // Update every 5 seconds
+        });
+
+        function loadPaymentRequests() {
+            const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+            const tbody = document.getElementById('payment-requests-body');
+            
+            tbody.innerHTML = payments.map(payment => {
+                const statusClass = `status-${payment.status}`;
+                
+                return `
+                    <tr>
+                        <td>${payment.transactionId}</td>
+                        <td>
+                            ${payment.userFullName || 'Unknown User'}
+                            <div class="user-details">
+                                <p>Email: ${payment.userEmail || 'N/A'}</p>
+                                <p>ID: ${payment.userId}</p>
+                            </div>
+                        </td>
+                        <td>${payment.planName}</td>
+                        <td>₱${payment.amount}</td>
+                        <td>${payment.paymentMethod}</td>
+                        <td>${new Date(payment.date).toLocaleDateString()}</td>
+                        <td class="${statusClass}">${payment.status}</td>
+                        <td>
+                            ${payment.status === 'pending' ? `
+                                <button class="action-btn approve-btn" onclick="approvePayment('${payment.id}')">Approve</button>
+                                <button class="action-btn reject-btn" onclick="rejectPayment('${payment.id}')">Reject</button>
+                            ` : payment.status === 'approved' ? `
+                                <span class="status-approved">Approved</span>
+                            ` : payment.status === 'rejected' ? `
+                                <span class="status-rejected">Rejected</span>
+                            ` : '-'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function approvePayment(paymentId) {
+            Swal.fire({
+                title: 'Approve Payment',
+                text: 'Are you sure you want to approve this payment?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Approve',
+                cancelButtonText: 'No, Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+                    const paymentIndex = payments.findIndex(p => p.id === paymentId);
+                    
+                    if (paymentIndex !== -1) {
+                        const payment = payments[paymentIndex];
+                        payment.status = 'approved';
+                        
+                        // Create subscription
+                        const subscription = {
+                            id: 'sub_' + Date.now(),
+                            userId: payment.userId,
+                            planId: payment.planName,
+                            status: 'active',
+                            startDate: new Date().toISOString(),
+                            expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                            autoRenew: true,
+                            paymentStatus: 'paid'
+                        };
+
+                        // Save subscription
+                        const subscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+                        subscriptions.push(subscription);
+                        localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+
+                        // Update payment
+                        localStorage.setItem('payments', JSON.stringify(payments));
+
+                        // Create receipt for student
+                        const receipt = {
+                            id: 'rcpt_' + Date.now(),
+                            paymentId: payment.id,
+                            transactionId: payment.transactionId,
+                            userId: payment.userId,
+                            userFullName: payment.userFullName,
+                            userEmail: payment.userEmail,
+                            planName: payment.planName,
+                            amount: payment.amount,
+                            paymentMethod: payment.paymentMethod,
+                            paymentDate: payment.date,
+                            approvalDate: new Date().toISOString(),
+                            subscriptionId: subscription.id,
+                            subscriptionStart: subscription.startDate,
+                            subscriptionEnd: subscription.expiryDate
+                        };
+
+                        // Save receipt
+                        const receipts = JSON.parse(localStorage.getItem('receipts') || '[]');
+                        receipts.push(receipt);
+                        localStorage.setItem('receipts', JSON.stringify(receipts));
+
+                        // Create notification with receipt for student
+                        createNotification({
+                            type: 'payment_approved',
+                            title: 'Payment Approved',
+                            message: `Your payment of ₱${payment.amount} for the ${payment.planName} plan has been approved.`,
+                            userId: payment.userId,
+                            receiptId: receipt.id,
+                            html: `
+                                <div style="text-align: left; margin-top: 1rem;">
+                                    <h3 style="color: #4a6bff; margin-bottom: 1rem;">Payment Receipt</h3>
+                                    <p><strong>Transaction ID:</strong> ${receipt.transactionId}</p>
+                                    <p><strong>Plan:</strong> ${receipt.planName}</p>
+                                    <p><strong>Amount:</strong> ₱${receipt.amount}</p>
+                                    <p><strong>Payment Method:</strong> ${receipt.paymentMethod}</p>
+                                    <p><strong>Payment Date:</strong> ${new Date(receipt.paymentDate).toLocaleDateString()}</p>
+                                    <p><strong>Approval Date:</strong> ${new Date(receipt.approvalDate).toLocaleDateString()}</p>
+                                    <h4 style="color: #4a6bff; margin: 1rem 0;">Subscription Details</h4>
+                                    <p><strong>Status:</strong> Active</p>
+                                    <p><strong>Start Date:</strong> ${new Date(receipt.subscriptionStart).toLocaleDateString()}</p>
+                                    <p><strong>Expiry Date:</strong> ${new Date(receipt.subscriptionEnd).toLocaleDateString()}</p>
+                                    <p><strong>Auto-Renew:</strong> Yes</p>
+                                </div>
+                            `
+                        });
+
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Payment Approved',
+                            text: 'The payment has been approved and the subscription has been activated. A receipt has been sent to the student.',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            loadPaymentRequests();
+                            updateStats();
+                        });
+                    }
+                }
+            });
+        }
+
+        function rejectPayment(paymentId) {
+            Swal.fire({
+                title: 'Reject Payment',
+                text: 'Are you sure you want to reject this payment?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Reject',
+                cancelButtonText: 'No, Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+                    const paymentIndex = payments.findIndex(p => p.id === paymentId);
+                    
+                    if (paymentIndex !== -1) {
+                        const payment = payments[paymentIndex];
+                        payment.status = 'rejected';
+                        localStorage.setItem('payments', JSON.stringify(payments));
+
+                        // Create notification for student
+                        createNotification({
+                            type: 'payment_rejected',
+                            title: 'Payment Rejected',
+                            message: `Your payment of ₱${payment.amount} for the ${payment.planName} plan has been rejected.`,
+                            userId: payment.userId
+                        });
+
+                        // Show success message
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Payment Rejected',
+                            text: 'The payment has been rejected.',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            loadPaymentRequests();
+                            updateStats();
+                        });
+                    }
+                }
+            });
+        }
+
+        function createNotification(notification) {
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const newNotification = {
+                id: 'notif_' + Date.now(),
+                ...notification,
+                createdAt: new Date().toISOString(),
+                read: false
+            };
+            notifications.push(newNotification);
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+
+            // If this is a payment approval notification with a receipt, also store it separately
+            if (notification.type === 'payment_approved' && notification.receiptId) {
+                const studentNotifications = JSON.parse(localStorage.getItem(`notifications_${notification.userId}`) || '[]');
+                studentNotifications.push(newNotification);
+                localStorage.setItem(`notifications_${notification.userId}`, JSON.stringify(studentNotifications));
+            }
+        }
+
+        function updateStats() {
+            const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+            const subscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
+            
+            document.getElementById('total-payments').textContent = payments.length;
+            document.getElementById('pending-payments').textContent = 
+                payments.filter(p => p.status === 'pending').length;
+            document.getElementById('approved-payments').textContent = 
+                payments.filter(p => p.status === 'approved').length;
+            
+            const totalRevenue = payments
+                .filter(p => p.status === 'approved')
+                .reduce((sum, p) => sum + parseFloat(p.amount), 0);
+            document.getElementById('total-revenue').textContent = '₱' + totalRevenue.toFixed(2);
+
+            // Show notification for new payments
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            const adminNotifications = notifications.filter(n => n.userId === 'admin' && !n.read);
+            
+            if (adminNotifications.length > 0) {
+                adminNotifications.forEach(notification => {
+                    Swal.fire({
+                        icon: 'info',
+                        title: notification.title,
+                        text: notification.message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                    
+                    // Mark notification as read
+                    notification.read = true;
+                });
+                
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+            }
+        }
+    </script>
+</body>
+</html> 

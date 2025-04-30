@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - CivilEdu</title>
+    <link rel="stylesheet" href="design.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        /* Profile Page Specific Styles */
+        .profile-page {
+            padding: 100px 5% 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .profile-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin: 0;
+        }
+        
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .profile-sidebar {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .profile-image-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-image-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .profile-image-container:hover .profile-image-overlay {
+            opacity: 1;
+        }
+        
+        .upload-label {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .profile-image-hint {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .profile-info-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .profile-info-item {
+            margin-bottom: 20px;
+        }
+        
+        .profile-info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .profile-info-item label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info-item p {
+            font-size: 16px;
+            color: #333;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .profile-main {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .profile-section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .save-btn {
+            background: var(--black-gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .save-btn:hover {
+            background: var(--black-gradient-dark);
+            transform: translateY(-2px);
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>CivilEdu</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#home">Home</a>
+            <a href="index.html#courses">Courses</a>
+            <a href="index.html#resources">Resources</a>
+            <a href="index.html#forum">Forum</a>
+            <a href="index.html#study-space">Study Space</a>
+            <a href="index.html#ebooks">E-Books</a>
+        </div>
+        <div class="auth-buttons">
+            <a href="login.html" class="login-btn">Login</a>
+            <a href="signup.html" class="signup-btn">Sign Up</a>
+        </div>
+        <div class="profile-section" style="display: none;">
+            <div class="profile-dropdown">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <span class="user-fullname"></span>
+                </div>
+                <div class="dropdown-content">
+                    <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="#" class="dropdown-item logout-btn"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Page Content -->
+    <div class="profile-page">
+        <div class="profile-header">
+            <h1>My Profile</h1>
+        </div>
+        
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="profile-image-section">
+                    <div class="profile-image-container">
+                        <img id="profileImage" src="https://via.placeholder.com/200" alt="Profile Image">
+                        <div class="profile-image-overlay">
+                            <label for="profileImageUpload" class="upload-label">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="profileImageUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                    <p class="profile-image-hint">Click to upload profile image</p>
+                </div>
+                
+                <div class="profile-info-section">
+                    <div class="profile-info-item">
+                        <label>Full Name</label>
+                        <p id="profileFullName"></p>
+                    </div>
+                    <div class="profile-info-item">
+                        <label>Email</label>
+                        <p id="profileEmail"></p>
+                    </div>
+                    <div class="profile-info-item">
+                        <label>Member Since</label>
+                        <p id="profileMemberSince"></p>
+                    </div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Courses Enrolled</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Forum Posts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">E-Books Downloaded</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-main">
+                <h2 class="profile-section-title">Edit Profile</h2>
+                <form class="profile-form" id="profileForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="specialization">Year Level</label>
+                        <input type="text" id="specialization" name="specialization" placeholder="e.g., 3rd Year">
+                    </div>
+                    <div class="form-group">
+                        <label for="university">University</label>
+                        <input type="text" id="university" name="university" placeholder="Your university">
+                    </div>
+                    <div class="form-group">
+                        <label for="graduationYear">Graduation Year</label>
+                        <input type="text" id="graduationYear" name="graduationYear" placeholder="e.g., 2025">
+                    </div>
+ 
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About CivilEdu</h3>
+                <p>Your trusted platform for civil engineering education</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html#courses">Courses</a></li>
+                    <li><a href="index.html#resources">Resources</a></li>
+                    <li><a href="index.html#forum">Forum</a></li>
+                    <li><a href="index.html#study-space">Study Space</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+       
+    </footer>
+
+    <script src="script.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Profile Page Specific JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || sessionStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Show profile section in navbar
+            document.querySelector('.auth-buttons').style.display = 'none';
+            document.querySelector('.profile-section').style.display = 'flex';
+            
+            // Populate profile information
+            populateProfileInfo();
+            
+            // Setup profile image upload
+            setupProfileImageUpload();
+            
+            // Setup form submission
+            setupProfileForm();
+            
+            // Setup logout button
+            setupLogoutButton();
+        });
+        
+        function populateProfileInfo() {
+            // Get user information from storage
+            const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+            const userFullName = localStorage.getItem('userFullName') || sessionStorage.getItem('userFullName');
+            const storageKey = `userProfileImage_${userEmail}`;
+            const userProfileImage = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey);
+            const memberSince = localStorage.getItem('memberSince') || new Date().toLocaleDateString();
+            const userBio = localStorage.getItem('userBio') || '';
+            const userSpecialization = localStorage.getItem('userSpecialization') || '';
+            const userUniversity = localStorage.getItem('userUniversity') || '';
+            const userGraduationYear = localStorage.getItem('userGraduationYear') || '';
+            
+            // Update profile panel information
+            document.getElementById('profileFullName').textContent = userFullName || 'Not set';
+            document.getElementById('profileEmail').textContent = userEmail || 'Not set';
+            document.getElementById('profileMemberSince').textContent = memberSince;
+            
+            // Update form fields
+            document.getElementById('fullName').value = userFullName || '';
+            document.getElementById('email').value = userEmail || '';
+            document.getElementById('bio').value = userBio;
+            document.getElementById('specialization').value = userSpecialization;
+            document.getElementById('university').value = userUniversity;
+            document.getElementById('graduationYear').value = userGraduationYear;
+            
+            // Update profile image if available, otherwise use default
+            if (userProfileImage) {
+                document.getElementById('profileImage').src = userProfileImage;
+            } else {
+                // Set default profile image
+                document.getElementById('profileImage').src = 'https://via.placeholder.com/200?text=Profile';
+            }
+            
+            // Update profile icon in navigation if available
+            if (userProfileImage) {
+                updateProfileIcon(userProfileImage);
+            } else {
+                // Set default profile icon
+                const profileIcon = document.querySelector('.profile-icon');
+                profileIcon.innerHTML = '<i class="fas fa-user-circle"></i>';
+            }
+            
+            // Update user fullname in navbar
+            document.querySelector('.user-fullname').textContent = userFullName || 'User';
+        }
+        
+        function setupProfileImageUpload() {
+            const profileImageUpload = document.getElementById('profileImageUpload');
+            const profileImage = document.getElementById('profileImage');
+            
+            profileImageUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        // Update profile image in the panel
+                        profileImage.src = event.target.result;
+                        
+                        // Update profile icon in the navigation bar
+                        updateProfileIcon(event.target.result);
+                        
+                        // Get user email for storage key
+                        const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+                        const storageKey = `userProfileImage_${userEmail}`;
+                        
+                        // Save to storage with user-specific key
+                        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                        if (isLoggedIn) {
+                            localStorage.setItem(storageKey, event.target.result);
+                        } else {
+                            sessionStorage.setItem(storageKey, event.target.result);
+                        }
+                        
+                        // Show success notification
+                        showNotification('Profile image updated successfully!', 'success');
+                    };
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+        }
+        
+        function setupProfileForm() {
+            const profileForm = document.getElementById('profileForm');
+            
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const fullName = document.getElementById('fullName').value;
+                const bio = document.getElementById('bio').value;
+                const specialization = document.getElementById('specialization').value;
+                const university = document.getElementById('university').value;
+                const graduationYear = document.getElementById('graduationYear').value;
+                
+                // Save to storage
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    localStorage.setItem('userFullName', fullName);
+                    localStorage.setItem('userBio', bio);
+                    localStorage.setItem('userSpecialization', specialization);
+                    localStorage.setItem('userUniversity', university);
+                    localStorage.setItem('userGraduationYear', graduationYear);
+                } else {
+                    sessionStorage.setItem('userFullName', fullName);
+                    sessionStorage.setItem('userBio', bio);
+                    sessionStorage.setItem('userSpecialization', specialization);
+                    sessionStorage.setItem('userUniversity', university);
+                    sessionStorage.setItem('userGraduationYear', graduationYear);
+                }
+                
+                // Update displayed name
+                document.getElementById('profileFullName').textContent = fullName;
+                document.querySelector('.user-fullname').textContent = fullName;
+                
+                // Show success notification
+                showNotification('Profile updated successfully!', 'success');
+            });
+        }
+        
+        function setupLogoutButton() {
+            const logoutBtn = document.querySelector('.logout-btn');
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Show confirmation dialog
+                Swal.fire({
+                    title: 'Sign Out',
+                    text: 'Are you sure you want to sign out?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, sign out',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Clear session storage
+                        sessionStorage.clear();
+                        
+                        // Clear localStorage if not using remember me
+                        if (localStorage.getItem('rememberMe') !== 'true') {
+                            localStorage.clear();
+                        } else {
+                            // Keep only remember me related data
+                            const rememberMe = localStorage.getItem('rememberMe');
+                            const isLoggedIn = localStorage.getItem('isLoggedIn');
+                            const userEmail = localStorage.getItem('userEmail');
+                            const userFullName = localStorage.getItem('userFullName');
+                            const sessionExpiration = localStorage.getItem('sessionExpiration');
+                            
+                            localStorage.clear();
+                            
+                            localStorage.setItem('rememberMe', rememberMe);
+                            localStorage.setItem('isLoggedIn', isLoggedIn);
+                            localStorage.setItem('userEmail', userEmail);
+                            localStorage.setItem('userFullName', userFullName);
+                            localStorage.setItem('sessionExpiration', sessionExpiration);
+                        }
+                        
+                        // Show success notification
+                        showNotification('Signed out successfully!', 'success');
+                        
+                        // Redirect to login page
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    }
+                });
+            });
+        }
+        
+        // Update profile icon with custom image
+        function updateProfileIcon(imageUrl) {
+            const profileIcon = document.querySelector('.profile-icon');
+            
+            // Clear existing content
+            profileIcon.innerHTML = '';
+            
+            // Create and append image element
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = 'Profile Image';
+            
+            // Add specific styling for the profile icon image
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '50%';
+            
+            // Handle image load error
+            img.onerror = function() {
+                // If image fails to load, revert to default icon
+                profileIcon.innerHTML = '<i class="fas fa-user-circle"></i>';
+            };
+            
+            profileIcon.appendChild(img);
+        }
+        
+        // Show notification using SweetAlert2
+        function showNotification(message, type = 'success') {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: type,
+                title: message,
+                background: type === 'success' ? '#4CAF50' : '#f44336',
+                color: '#fff',
+                iconColor: '#fff',
+                customClass: {
+                    popup: 'animated fadeInDown'
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

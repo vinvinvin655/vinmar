@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Login - CiviLearn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .login-header p {
+            color: var(--secondary-color);
+            margin-bottom: 0;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 107, 255, 0.25);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #3a5bef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 107, 255, 0.3);
+        }
+
+        .form-check {
+            margin: 1rem 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .student-link {
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--secondary-color);
+        }
+        
+        .student-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .student-link a:hover {
+            color: #3a5bef;
+            text-decoration: underline;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo h2 {
+            color: var(--primary-color);
+            font-weight: 800;
+            margin: 0;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--secondary-color);
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .social-login {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .social-login p {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .social-login p::before,
+        .social-login p::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background-color: #e0e0e0;
+        }
+        
+        .social-login p::before {
+            left: 0;
+        }
+        
+        .social-login p::after {
+            right: 0;
+        }
+        
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e0e0e0;
+            background-color: white;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .social-btn.google:hover {
+            color: #DB4437;
+        }
+        
+        .social-btn.facebook:hover {
+            color: #4267B2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="logo">
+                <h2>CiviLearn</h2>
+            </div>
+            <div class="login-header">
+                <h1>Teacher Login</h1>
+                <p>Access your teaching dashboard</p>
+            </div>
+            <form id="teacherLoginForm">
+                <div class="mb-3">
+                    <input type="email" class="form-control" id="email" placeholder="Email Address" required>
+                </div>
+                <div class="mb-3 password-container">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    <i class="fas fa-eye-slash password-toggle" id="togglePassword"></i>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                        Remember me
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign In</button>
+            </form>
+            
+            <div class="social-login">
+                <p>Or sign in with</p>
+                <div class="social-buttons">
+                    <a href="#" class="social-btn google">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="#" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>Don't have a teacher account? <a href="teacher-signup.html">Sign up</a></p>
+        <p class="student-link">I'm a student <a href="login.html">Login here</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if there's a remembered session
+            const rememberedSession = localStorage.getItem('rememberedSession');
+            if (rememberedSession) {
+                const session = JSON.parse(rememberedSession);
+                // Check if the session is still valid (e.g., not expired)
+                if (session && session.timestamp && (new Date().getTime() - session.timestamp < 7 * 24 * 60 * 60 * 1000)) {
+                    // Copy remembered session to sessionStorage
+                    sessionStorage.setItem('userSession', JSON.stringify(session));
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    sessionStorage.setItem('userId', session.id);
+                    sessionStorage.setItem('userEmail', session.email);
+                    sessionStorage.setItem('userFullName', session.name);
+                    sessionStorage.setItem('userRole', 'teacher');
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'teacher-dashboard.html';
+                    return;
+                } else {
+                    // Clear expired remembered session
+                    localStorage.removeItem('rememberedSession');
+                }
+            }
+            
+            // Toggle password visibility
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            
+            togglePassword.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                togglePassword.classList.toggle('fa-eye');
+                togglePassword.classList.toggle('fa-eye-slash');
+            });
+            
+            // Handle form submission
+            const teacherLoginForm = document.getElementById('teacherLoginForm');
+            
+            teacherLoginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+                
+                // Get users from localStorage
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                // Find teacher with matching credentials
+                const teacher = users.find(user => 
+                    user.email === email && 
+                    user.password === password && 
+                    user.role === 'teacher'
+                );
+                
+                if (teacher) {
+                    // Create session data
+                    const session = {
+                        id: teacher.id,
+                        name: teacher.name,
+                        email: teacher.email,
+                        role: 'teacher',
+                        timestamp: new Date().getTime()
+                    };
+                    
+                    // Always store active session in sessionStorage
+                    sessionStorage.setItem('userSession', JSON.stringify(session));
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    sessionStorage.setItem('userId', teacher.id);
+                    sessionStorage.setItem('userEmail', teacher.email);
+                    sessionStorage.setItem('userFullName', teacher.name);
+                    sessionStorage.setItem('userRole', 'teacher');
+                    
+                    // If remember me is checked, store session data in localStorage for future auto-login
+                    if (rememberMe) {
+                        localStorage.setItem('rememberedSession', JSON.stringify(session));
+                    } else {
+                        localStorage.removeItem('rememberedSession');
+                    }
+                    
+                    // Show success message and redirect
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Welcome back!',
+                        text: 'You have successfully logged in.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = 'teacher-dashboard.html';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: 'Invalid credentials or not a teacher account.',
+                        confirmButtonColor: '#4a6bff'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
